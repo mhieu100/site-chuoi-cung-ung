@@ -1,0 +1,238 @@
+
+  <!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>CleanFood | Support</title>
+    <style>
+      .map-container {
+        height: 300px;
+        background-image: url('https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+      }
+      .faq-item {
+        transition: all 0.3s ease;
+      }
+      .faq-item:hover {
+        transform: translateX(5px);
+      }
+      .chat-button {
+        box-shadow: 0 4px 6px -1px rgba(72, 187, 120, 0.4);
+        transition: all 0.3s ease;
+      }
+      .chat-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 15px -3px rgba(72, 187, 120, 0.4);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-800" alt="Support page">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm" alt="CleanFood navigation">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 flex items-center">
+              <i class="fas fa-leaf text-green-500 text-2xl mr-2"></i>
+              <span class="text-xl font-bold text-gray-800">CleanFood</span>
+            </div>
+          </div>
+          <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
+            <a href="#" class="text-gray-500 hover:text-green-600 px-3 py-2 text-sm font-medium">Home</a>
+            <a href="#" class="text-gray-500 hover:text-green-600 px-3 py-2 text-sm font-medium">Products</a>
+            <a href="#" class="text-gray-500 hover:text-green-600 px-3 py-2 text-sm font-medium">Farms</a>
+            <a href="#" class="text-green-600 px-3 py-2 text-sm font-medium">Support</a>
+          </div>
+          <div class="flex items-center">
+            <div class="relative">
+              <button class="bg-green-50 hover:bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium flex items-center" alt="User menu">
+                <i class="fas fa-user-circle mr-2"></i>
+                <span>My Account</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  
+    <!-- Page Header -->
+    <div class="bg-green-600 py-16 text-white" alt="Support header">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">We're Here to Help</h1>
+        <p class="text-xl max-w-2xl mx-auto">Connect with our support team for any questions about our agricultural supply chain services.</p>
+      </div>
+    </div>
+  
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Contact Form -->
+        <div class="md:col-span-2 bg-white rounded-xl shadow-sm p-6" alt="Contact form">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">Send Us a Message</h2>
+          <form class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+              </div>
+              <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+              </div>
+            </div>
+            <div>
+              <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+              <select id="subject" name="subject" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                <option value="">Select a topic</option>
+                <option value="farmers">Farmer Support</option>
+                <option value="buyers">Buyer Inquiries</option>
+                <option value="tech">Technical Issues</option>
+                <option value="general">General Questions</option>
+              </select>
+            </div>
+            <div>
+              <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Your Message</label>
+              <textarea id="message" name="message" rows="5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"></textarea>
+            </div>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium w-full" alt="Submit form">
+              Send Message
+            </button>
+          </form>
+        </div>
+  
+        <!-- Support Options -->
+        <div class="space-y-8">
+          <!-- FAQ Section -->
+          <div class="bg-white rounded-xl shadow-sm p-6" alt="FAQs">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+              <i class="fas fa-question-circle text-green-500 mr-3"></i>
+              Frequently Asked Questions
+            </h2>
+            <div class="space-y-4">
+              <div class="faq-item">
+                <a href="#" class="text-green-600 hover:text-green-800 font-medium flex items-center justify-between" alt="FAQ question">
+                  <span>How do I register as a farmer?</span>
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+                <div class="border-b border-gray-200 mt-3"></div>
+              </div>
+              <div class="faq-item">
+                <a href="#" class="text-green-600 hover:text-green-800 font-medium flex items-center justify-between" alt="FAQ question">
+                  <span>What are the certification requirements?</span>
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+                <div class="border-b border-gray-200 mt-3"></div>
+              </div>
+              <div class="faq-item">
+                <a href="#" class="text-green-600 hover:text-green-800 font-medium flex items-center justify-between" alt="FAQ question">
+                  <span>How does the supply chain tracking work?</span>
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+                <div class="border-b border-gray-200 mt-3"></div>
+              </div>
+              <div class="faq-item">
+                <a href="#" class="text-green-600 hover:text-green-800 font-medium flex items-center justify-between" alt="FAQ question">
+                  <span>Payment schedule for farmers</span>
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+                <div class="border-b border-gray-200 mt-3"></div>
+              </div>
+              <div class="faq-item">
+                <a href="#" class="text-green-600 hover:text-green-800 font-medium flex items-center justify-between" alt="FAQ question">
+                  <span>Quality standards and inspections</span>
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+              </div>
+            </div>
+            <a href="#" class="inline-block mt-4 text-green-600 hover:text-green-800 font-medium" alt="View all">
+              View all FAQs <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+  
+          <!-- Contact Info -->
+          <div class="bg-white rounded-xl shadow-sm p-6" alt="Contact info">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+              <i class="fas fa-envelope text-green-500 mr-3"></i>
+              Other Ways to Reach Us
+            </h2>
+            <div class="space-y-4">
+              <div class="flex items-start">
+                <i class="fas fa-phone-alt text-green-500 mt-1 mr-4"></i>
+                <div>
+                  <h3 class="font-medium text-gray-800">Phone Support</h3>
+                  <p class="text-gray-600">(800) 555-0199</p>
+                  <p class="text-sm text-gray-500">Mon-Fri, 8am-5pm EST</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <i class="fas fa-envelope text-green-500 mt-1 mr-4"></i>
+                <div>
+                  <h3 class="font-medium text-gray-800">Email Us</h3>
+                  <p class="text-gray-600"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6b181e1b1b04191f2b08070e0a050d04040f45080406">[email&#160;protected]</a></p>
+                  <p class="text-sm text-gray-500">Response within 24 hours</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <i class="fas fa-map-marker-alt text-green-500 mt-1 mr-4"></i>
+                <div>
+                  <h3 class="font-medium text-gray-800">Visit Us</h3>
+                  <p class="text-gray-600">123 Farm Lane<br>Agri Valley, CA 90210</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Map Section -->
+      <div class="mt-12 bg-white rounded-xl shadow-sm overflow-hidden" alt="Company location">
+        <div class="map-container relative" alt="Map image">
+          <div class="absolute inset-0 bg-black opacity-20" alt="Background image"></div>
+          <div class="absolute bottom-0 left-0 right-0 bg-white p-6" alt="CleanFood Headquarters
+            123 Farm Lane, Ag">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">CleanFood Headquarters</h3>
+            <p class="text-gray-600">123 Farm Lane, Agri Valley, CA 90210</p>
+            <a href="#" class="inline-block mt-4 text-green-600 hover:text-green-800 font-medium" alt="Directions">
+              Get Directions <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Live Chat Button -->
+    <div class="fixed bottom-6 right-6">
+      <button class="chat-button bg-green-500 hover:bg-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center" alt="Live chat">
+        <i class="fas fa-comment-dots text-2xl"></i>
+      </button>
+    </div>
+  
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200" alt="Website footer">
+      <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="md:flex md:items-center md:justify-between">
+          <div class="flex justify-center md:order-2 space-x-6">
+            <a href="#" class="text-gray-400 hover:text-green-600" alt="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-green-600" alt="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-green-600" alt="Twitter">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-green-600" alt="LinkedIn">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          </div>
+          <div class="mt-8 md:mt-0 md:order-1">
+            <p class="text-center text-sm text-gray-500">
+              © 2025 CleanFood, Inc. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body></html>

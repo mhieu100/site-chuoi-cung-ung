@@ -1,0 +1,441 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>CleanFood | All Products</title>
+    <style>
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+      .filter-section {
+        scrollbar-width: thin;
+        scrollbar-color: #e5e7eb #f9fafb;
+      }
+      .filter-section::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      .filter-section::-webkit-scrollbar-thumb {
+        background-color: #e5e7eb;
+        border-radius: 2px;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-800" alt="Products page">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm" alt="CleanFood navigation">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 flex items-center">
+              <i class="fas fa-leaf text-green-500 text-2xl mr-2"></i>
+              <span class="text-xl font-bold text-gray-800">CleanFood</span>
+            </div>
+          </div>
+          <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
+            <a href="#" class="text-gray-500 hover:text-green-600 px-3 py-2 text-sm font-medium">Home</a>
+            <a href="#" class="text-green-600 px-3 py-2 text-sm font-medium border-b-2 border-green-600">Products</a>
+            <a href="#" class="text-gray-500 hover:text-green-600 px-3 py-2 text-sm font-medium">Farms</a>
+            <a href="#" class="text-gray-500 hover:text-green-600 px-3 py-2 text-sm font-medium">Blog</a>
+          </div>
+          <div class="flex items-center">
+            <div class="relative">
+              <button class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center" alt="User menu">
+                <i class="fas fa-user-circle mr-2"></i>
+                <span>My Account</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Page Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">All Products</h1>
+        <p class="text-gray-600">Browse our selection of fresh, sustainable agricultural products from verified farms</p>
+      </div>
+  
+      <!-- Search and Filters -->
+      <div class="flex flex-col md:flex-row gap-6 mb-8">
+        <!-- Search Bar -->
+        <div class="flex-1">
+          <div class="relative" alt="Search products">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-search text-gray-400"></i>
+            </div>
+            <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Search for products..." alt="Search input">
+          </div>
+        </div>
+  
+        <!-- Sort Dropdown -->
+        <div class="w-full md:w-auto">
+          <select class="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" alt="Sort options">
+            <option>Sort by: Featured</option>
+            <option>Sort by: Newest</option>
+            <option>Sort by: Price: Low to High</option>
+            <option>Sort by: Price: High to Low</option>
+            <option>Sort by: Name A-Z</option>
+          </select>
+        </div>
+  
+        <!-- Filter Toggle (Mobile) -->
+        <button class="md:hidden flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg bg-white shadow-sm text-gray-700" alt="Filters button">
+          <i class="fas fa-filter mr-2"></i>
+          Filters
+        </button>
+      </div>
+  
+      <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Filters Sidebar -->
+        <div class="lg:w-72 hidden md:block">
+          <div class="bg-white rounded-lg shadow-sm p-6 filter-section overflow-y-auto max-h-[calc(100vh-200px)] sticky top-4" alt="Filters
+            
+            
+            
+           ">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Filters</h2>
+            
+            <!-- Product Type Filter -->
+            <div class="mb-6">
+              <h3 class="text-sm font-medium text-gray-700 mb-3">Product Type</h3>
+              <div class="space-y-2">
+                <div class="flex items-center">
+                  <input id="fruits" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                  <label for="fruits" class="ml-3 text-sm text-gray-600">Fruits</label>
+                </div>
+                <div class="flex items-center">
+                  <input id="vegetables" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                  <label for="vegetables" class="ml-3 text-sm text-gray-600">Vegetables</label>
+                </div>
+                <div class="flex items-center">
+                  <input id="grains" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                  <label for="grains" class="ml-3 text-sm text-gray-600">Grains</label>
+                </div>
+                <div class="flex items-center">
+                  <input id="dairy" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                  <label for="dairy" class="ml-3 text-sm text-gray-600">Dairy</label>
+                </div>
+                <div class="flex items-center">
+                  <input id="meat" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                  <label for="meat" class="ml-3 text-sm text-gray-600">Meat &amp; Poultry</label>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Origin Filter -->
+            <div class="mb-6">
+              <h3 class="text-sm font-medium text-gray-700 mb-3">Origin</h3>
+              <select class="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 text-sm" alt="Origin select">
+                <option>All Regions</option>
+                <option>North America</option>
+                <option>South America</option>
+                <option>Europe</option>
+                <option>Asia</option>
+                <option>Africa</option>
+                <option>Australia</option>
+              </select>
+            </div>
+  
+            <!-- Certification Filter -->
+            <div class="mb-6">
+              <h3 class="text-sm font-medium text-gray-700 mb-3">Certification</h3>
+              <div class="space-y-2">
+                <div class="flex items-center">
+                  <input id="organic" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                  <label for="organic" class="ml-3 text-sm text-gray-600">Organic</label>
+                </div>
+                <div class="flex items-center">
+                  <input id="fairtrade" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                  <label for="fairtrade" class="ml-3 text-sm text-gray-600">Fair Trade</label>
+                </div>
+                <div class="flex items-center">
+                  <input id="non-gmo" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                  <label for="non-gmo" class="ml-3 text-sm text-gray-600">Non-GMO</label>
+                </div>
+                <div class="flex items-center">
+                  <input id="regenerative" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                  <label for="regenerative" class="ml-3 text-sm text-gray-600">Regenerative</label>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Availability Filter -->
+            <div class="mb-6">
+              <h3 class="text-sm font-medium text-gray-700 mb-3">Availability</h3>
+              <div class="space-y-2">
+                <div class="flex items-center">
+                  <input id="in-stock" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                  <label for="in-stock" class="ml-3 text-sm text-gray-600">In Stock</label>
+                </div>
+                <div class="flex items-center">
+                  <input id="pre-order" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                  <label for="pre-order" class="ml-3 text-sm text-gray-600">Pre-Order</label>
+                </div>
+                <div class="flex items-center">
+                  <input id="seasonal" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                  <label for="seasonal" class="ml-3 text-sm text-gray-600">Seasonal</label>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Price Range -->
+            <div class="mb-6">
+              <h3 class="text-sm font-medium text-gray-700 mb-3">Price Range</h3>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-gray-500">$0</span>
+                <span class="text-xs text-gray-500">$100+</span>
+              </div>
+              <input type="range" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="100" alt="Price range">
+            </div>
+  
+            <button class="w-full bg-green-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-green-700 transition-colors" alt="Apply filters">
+              Apply Filters
+            </button>
+          </div>
+        </div>
+  
+        <!-- Products Grid -->
+        <div class="flex-1">
+          <!-- Results Count -->
+          <div class="flex justify-between items-center mb-6">
+            <p class="text-sm text-gray-600">Showing 1-12 of 48 products</p>
+            <div class="flex items-center space-x-2">
+              <button class="p-2 rounded-md bg-white text-gray-500 border border-gray-300" alt="Grid view">
+                <i class="fas fa-th"></i>
+              </button>
+              <button class="p-2 rounded-md bg-gray-100 text-gray-700 border border-gray-300" alt="List view">
+                <i class="fas fa-list"></i>
+              </button>
+            </div>
+          </div>
+  
+          <!-- Products Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Product Card 1 -->
+            <div class="product-card bg-white rounded-lg shadow-sm overflow-hidden transition duration-300" alt="Product card">
+              <div class="relative h-48 bg-gray-100 overflow-hidden" alt="Product image">
+                <img src="https://images.unsplash.com/photo-1518977676601-b53f82aba655?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Organic rice" class="w-full h-full object-cover">
+                <div class="absolute top-3 right-3 bg-green-600 text-white text-xs px-2 py-1 rounded-full" alt="Organic">Organic</div>
+              </div>
+              <div class="p-4">
+                <div class="flex justify-between items-start mb-1">
+                  <h3 class="font-medium text-gray-800">Organic Basmati Rice</h3>
+                  <span class="text-green-600 font-medium">$8.99/kg</span>
+                </div>
+                <div class="flex items-center text-xs text-gray-500 mb-3">
+                  <i class="fas fa-map-marker-alt mr-1"></i>
+                  <span>Punjab, India</span>
+                </div>
+                <div class="flex items-center justify-between text-sm mb-3">
+                  <span class="text-gray-600">Available: 120 kg</span>
+                  <span class="flex items-center">
+                    <i class="fas fa-star text-yellow-400 mr-1"></i>
+                    4.8 (24)
+                  </span>
+                </div>
+                <button class="w-full bg-green-50 hover:bg-green-100 text-green-700 py-2 px-4 rounded-md text-sm font-medium transition-colors" alt="View details">
+                  View Details
+                </button>
+              </div>
+            </div>
+  
+            <!-- Product Card 2 -->
+            <div class="product-card bg-white rounded-lg shadow-sm overflow-hidden transition duration-300" alt="Product card">
+              <div class="relative h-48 bg-gray-100 overflow-hidden" alt="Product image">
+                <img src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Fresh mangoes" class="w-full h-full object-cover">
+                <div class="absolute top-3 right-3 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full" alt="Seasonal">Seasonal</div>
+              </div>
+              <div class="p-4">
+                <div class="flex justify-between items-start mb-1">
+                  <h3 class="font-medium text-gray-800">Alphonso Mangoes</h3>
+                  <span class="text-green-600 font-medium">$3.49/each</span>
+                </div>
+                <div class="flex items-center text-xs text-gray-500 mb-3">
+                  <i class="fas fa-map-marker-alt mr-1"></i>
+                  <span>Ratnagiri, India</span>
+                </div>
+                <div class="flex items-center justify-between text-sm mb-3">
+                  <span class="text-gray-600">Available: 45 boxes</span>
+                  <span class="flex items-center">
+                    <i class="fas fa-star text-yellow-400 mr-1"></i>
+                    4.9 (36)
+                  </span>
+                </div>
+                <button class="w-full bg-green-50 hover:bg-green-100 text-green-700 py-2 px-4 rounded-md text-sm font-medium transition-colors" alt="View details">
+                  View Details
+                </button>
+              </div>
+            </div>
+  
+            <!-- Product Card 3 -->
+            <div class="product-card bg-white rounded-lg shadow-sm overflow-hidden transition duration-300" alt="Product card">
+              <div class="relative h-48 bg-gray-100 overflow-hidden" alt="Product image">
+                <img src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Coffee beans" class="w-full h-full object-cover">
+                <div class="absolute top-3 right-3 flex space-x-1">
+                  <div class="bg-green-600 text-white text-xs px-2 py-1 rounded-full" alt="Organic">Organic</div>
+                  <div class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full" alt="Fair Trade">Fair Trade</div>
+                </div>
+              </div>
+              <div class="p-4">
+                <div class="flex justify-between items-start mb-1">
+                  <h3 class="font-medium text-gray-800">Arabica Coffee Beans</h3>
+                  <span class="text-green-600 font-medium">$12.99/lb</span>
+                </div>
+                <div class="flex items-center text-xs text-gray-500 mb-3">
+                  <i class="fas fa-map-marker-alt mr-1"></i>
+                  <span>Antioquia, Colombia</span>
+                </div>
+                <div class="flex items-center justify-between text-sm mb-3">
+                  <span class="text-gray-600">Available: 28 lb</span>
+                  <span class="flex items-center">
+                    <i class="fas fa-star text-yellow-400 mr-1"></i>
+                    4.7 (42)
+                  </span>
+                </div>
+                <button class="w-full bg-green-50 hover:bg-green-100 text-green-700 py-2 px-4 rounded-md text-sm font-medium transition-colors" alt="View details">
+                  View Details
+                </button>
+              </div>
+            </div>
+  
+            <!-- Product Card 4 -->
+            <div class="product-card bg-white rounded-lg shadow-sm overflow-hidden transition duration-300" alt="Product card">
+              <div class="relative h-48 bg-gray-100 overflow-hidden" alt="Product image">
+                <img src="https://images.unsplash.com/photo-1722553908840-f933748f385c?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Organic apples" class="w-full h-full object-cover" loading="lazy">
+                <div class="absolute top-3 right-3 bg-green-600 text-white text-xs px-2 py-1 rounded-full" alt="Organic">Organic</div>
+              </div>
+              <div class="p-4">
+                <div class="flex justify-between items-start mb-1">
+                  <h3 class="font-medium text-gray-800">Honeycrisp Apples</h3>
+                  <span class="text-green-600 font-medium">$2.99/lb</span>
+                </div>
+                <div class="flex items-center text-xs text-gray-500 mb-3">
+                  <i class="fas fa-map-marker-alt mr-1"></i>
+                  <span>Washington, USA</span>
+                </div>
+                <div class="flex items-center justify-between text-sm mb-3">
+                  <span class="text-gray-600">Available: 150 lb</span>
+                  <span class="flex items-center">
+                    <i class="fas fa-star text-yellow-400 mr-1"></i>
+                    4.6 (31)
+                  </span>
+                </div>
+                <button class="w-full bg-green-50 hover:bg-green-100 text-green-700 py-2 px-4 rounded-md text-sm font-medium transition-colors" alt="View details">
+                  View Details
+                </button>
+              </div>
+            </div>
+  
+            <!-- Product Card 5 -->
+            <div class="product-card bg-white rounded-lg shadow-sm overflow-hidden transition duration-300" alt="Product card">
+              <div class="relative h-48 bg-gray-100 overflow-hidden" alt="Product image">
+                <img src="https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Free range" class="w-full h-full object-cover">
+                <div class="absolute top-3 right-3 bg-green-600 text-white text-xs px-2 py-1 rounded-full" alt="Free Range">Free Range</div>
+              </div>
+              <div class="p-4">
+                <div class="flex justify-between items-start mb-1">
+                  <h3 class="font-medium text-gray-800">Pasture-Raised Eggs</h3>
+                  <span class="text-green-600 font-medium">$5.99/dozen</span>
+                </div>
+                <div class="flex items-center text-xs text-gray-500 mb-3">
+                  <i class="fas fa-map-marker-alt mr-1"></i>
+                  <span>Vermont, USA</span>
+                </div>
+                <div class="flex items-center justify-between text-sm mb-3">
+                  <span class="text-gray-600">Available: 35 dozen</span>
+                  <span class="flex items-center">
+                    <i class="fas fa-star text-yellow-400 mr-1"></i>
+                    4.8 (29)
+                  </span>
+                </div>
+                <button class="w-full bg-green-50 hover:bg-green-100 text-green-700 py-2 px-4 rounded-md text-sm font-medium transition-colors" alt="View details">
+                  View Details
+                </button>
+              </div>
+            </div>
+  
+            <!-- Product Card 6 -->
+            <div class="product-card bg-white rounded-lg shadow-sm overflow-hidden transition duration-300" alt="Product card">
+              <div class="relative h-48 bg-gray-100 overflow-hidden" alt="Product image">
+                <img src="https://images.unsplash.com/photo-1595303477117-8dddd2894299?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Heirloom tomatoes" class="w-full h-full object-cover" loading="lazy">
+                <div class="absolute top-3 right-3 flex space-x-1">
+                  <div class="bg-green-600 text-white text-xs px-2 py-1 rounded-full" alt="Organic">Organic</div>
+                  <div class="bg-purple-600 text-white text-xs px-2 py-1 rounded-full" alt="Heirloom">Heirloom</div>
+                </div>
+              </div>
+              <div class="p-4">
+                <div class="flex justify-between items-start mb-1">
+                  <h3 class="font-medium text-gray-800">Heirloom Tomatoes</h3>
+                  <span class="text-green-600 font-medium">$4.99/lb</span>
+                </div>
+                <div class="flex items-center text-xs text-gray-500 mb-3">
+                  <i class="fas fa-map-marker-alt mr-1"></i>
+                  <span>California, USA</span>
+                </div>
+                <div class="flex items-center justify-between text-sm mb-3">
+                  <span class="text-gray-600">Available: 40 lb</span>
+                  <span class="flex items-center">
+                    <i class="fas fa-star text-yellow-400 mr-1"></i>
+                    4.9 (18)
+                  </span>
+                </div>
+                <button class="w-full bg-green-50 hover:bg-green-100 text-green-700 py-2 px-4 rounded-md text-sm font-medium transition-colors" alt="View details">
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Pagination -->
+          <div class="mt-8 flex justify-center">
+            <nav class="flex items-center space-x-1" alt="Pagination navigation">
+              <button type="button" class="p-2 rounded-md text-gray-400 bg-white border border-gray-300 disabled:opacity-50" disabled="" alt="Previous page">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button type="button" class="px-4 py-2 rounded-md text-white bg-green-600 border border-green-600 font-medium" alt="Page 1">1</button>
+              <button type="button" class="px-4 py-2 rounded-md text-gray-700 bg-white border border-gray-300 font-medium hover:bg-gray-50" alt="Page 2">2</button>
+              <button type="button" class="px-4 py-2 rounded-md text-gray-700 bg-white border border-gray-300 font-medium hover:bg-gray-50" alt="Page 3">3</button>
+              <button type="button" class="px-4 py-2 rounded-md text-gray-700 bg-white border border-gray-300 font-medium hover:bg-gray-50" alt="Page 4">4</button>
+              <span class="px-2 py-2 text-gray-700">...</span>
+              <button type="button" class="px-4 py-2 rounded-md text-gray-700 bg-white border border-gray-300 font-medium hover:bg-gray-50" alt="Page 8">8</button>
+              <button type="button" class="p-2 rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-50" alt="Next page">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200" alt="Website footer">
+      <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="md:flex md:items-center md:justify-between">
+          <div class="flex justify-center md:order-2 space-x-6">
+            <a href="#" class="text-gray-400 hover:text-green-600" alt="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-green-600" alt="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-green-600" alt="Twitter">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-green-600" alt="LinkedIn">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          </div>
+          <div class="mt-8 md:mt-0 md:order-1">
+            <p class="text-center text-sm text-gray-500">
+              © 2025 CleanFood, Inc. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body></html>

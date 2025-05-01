@@ -1,0 +1,352 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>AgriChain - Logistics Dashboard</title>
+    <style>
+      .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 6px;
+      }
+      .route-line {
+        position: absolute;
+        left: 50%;
+        top: 20px;
+        bottom: 20px;
+        width: 2px;
+        background: linear-gradient(to bottom, #4ade80, #3b82f6);
+        transform: translateX(-50%);
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              dark: {
+                800: '#1a202c',
+                700: '#2d3748',
+                600: '#4a5568'
+              }
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-gray-900 text-gray-100" alt="Logistics dashboard">
+    <!-- Navigation -->
+    <nav class="bg-gray-800 shadow-md" alt="AgriChain navigation">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 flex items-center">
+              <i class="fas fa-truck text-green-500 text-2xl mr-2"></i>
+              <span class="text-xl font-bold text-white">AgriChain</span>
+            </div>
+          </div>
+          <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
+            <a href="#" class="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">Dashboard</a>
+            <a href="#" class="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">Shipments</a>
+            <a href="#" class="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">Drivers</a>
+            <a href="#" class="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">Reports</a>
+          </div>
+          <div class="flex items-center">
+            <div class="relative">
+              <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center" alt="User menu">
+                <i class="fas fa-user-circle mr-2"></i>
+                <span>Operator</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-2xl font-bold text-white">Shipment Tracking</h1>
+          <p class="text-gray-400">Monitor and update shipment status in real-time</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium" alt="New shipment">
+            <i class="fas fa-plus mr-1"></i> New Shipment
+          </button>
+        </div>
+      </div>
+  
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Shipment Details -->
+        <div class="lg:col-span-2">
+          <div class="bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700 mb-6" alt="Shipment details">
+            <div class="flex justify-between items-start mb-6">
+              <div>
+                <h2 class="text-xl font-semibold text-white mb-1">Shipment #AG2025-8472</h2>
+                <div class="flex items-center text-sm text-gray-400">
+                  <span class="status-indicator bg-green-500" alt="Background image"></span>
+                  <span>In Transit</span>
+                </div>
+              </div>
+              <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 px-4 py-2 rounded-md text-sm font-medium" alt="Print label">
+                <i class="fas fa-print mr-1"></i> Print Label
+              </button>
+            </div>
+  
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div class="bg-gray-700 rounded-lg p-4" alt="Driver info">
+                <p class="text-xs text-gray-400 mb-1">Driver</p>
+                <p class="text-white font-medium">Maria Rodriguez</p>
+                <p class="text-sm text-gray-400">License #DL-847293</p>
+              </div>
+              <div class="bg-gray-700 rounded-lg p-4" alt="Vehicle info">
+                <p class="text-xs text-gray-400 mb-1">Vehicle</p>
+                <p class="text-white font-medium">Refrigerated Truck #RT-45</p>
+                <p class="text-sm text-gray-400">Capacity: 8,000 kg</p>
+              </div>
+              <div class="bg-gray-700 rounded-lg p-4" alt="Cargo info">
+                <p class="text-xs text-gray-400 mb-1">Cargo</p>
+                <p class="text-white font-medium">Organic Avocados</p>
+                <p class="text-sm text-gray-400">1,200 kg | 10°C required</p>
+              </div>
+            </div>
+  
+            <!-- Map Placeholder -->
+            <div class="bg-gray-700 rounded-lg h-64 mb-6 relative overflow-hidden" alt="Map route">
+              <div class="absolute inset-0 flex items-center justify-center">
+                <i class="fas fa-map-marked-alt text-gray-600 text-5xl"></i>
+              </div>
+              <div class="absolute bottom-4 left-4 right-4 bg-black bg-opacity-50 text-white p-3 rounded" alt="From
+                    Fresno, CA
+                  ">
+                <div class="flex justify-between">
+                  <div>
+                    <p class="text-xs text-gray-300">From</p>
+                    <p class="text-sm">Fresno, CA</p>
+                  </div>
+                  <div class="text-center">
+                    <p class="text-xs text-gray-300">ETA</p>
+                    <p class="text-sm">Apr 25, 2025 14:30</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-300">To</p>
+                    <p class="text-sm text-right">Denver, CO</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <button class="bg-green-600 hover:bg-green-700 text-white py-3 rounded-md font-medium flex items-center justify-center" alt="Scan in">
+                <i class="fas fa-qrcode mr-2"></i> Scan In
+              </button>
+              <button class="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-medium flex items-center justify-center" alt="Update status">
+                <i class="fas fa-edit mr-2"></i> Update Status
+              </button>
+              <button class="bg-red-600 hover:bg-red-700 text-white py-3 rounded-md font-medium flex items-center justify-center" alt="Scan out">
+                <i class="fas fa-sign-out-alt mr-2"></i> Scan Out
+              </button>
+            </div>
+          </div>
+  
+          <!-- Temperature Log -->
+          <div class="bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700" alt="Temperature log">
+            <h2 class="text-xl font-semibold text-white mb-6">Temperature Monitoring</h2>
+            <div class="bg-gray-700 rounded-lg h-48 mb-4" alt="Temperature chart">
+              <div class="absolute inset-0 flex items-center justify-center">
+                <i class="fas fa-chart-line text-gray-600 text-5xl"></i>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div class="text-center">
+                <p class="text-xs text-gray-400">Current Temp</p>
+                <p class="text-2xl font-bold text-green-500">9.5°C</p>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-400">Min Temp</p>
+                <p class="text-xl font-bold text-blue-500">8.2°C</p>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-400">Max Temp</p>
+                <p class="text-xl font-bold text-yellow-500">11.1°C</p>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-400">Alerts</p>
+                <p class="text-xl font-bold text-red-500">0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Timeline -->
+        <div>
+          <div class="bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700" alt="Shipment timeline">
+            <h2 class="text-xl font-semibold text-white mb-6">Shipment Timeline</h2>
+            
+            <div class="space-y-4 relative">
+              <div class="route-line"></div>
+              
+              <div class="timeline-item pl-8 relative">
+                <div class="bg-blue-500 h-4 w-4 rounded-full absolute left-0 top-1 z-10" alt="Background image"></div>
+                <div class="bg-gray-700 rounded-lg p-4" alt="Departure
+                    Apr 23, 08:30
+          ">
+                  <div class="flex justify-between items-start">
+                    <p class="font-medium text-white">Departure</p>
+                    <p class="text-xs text-gray-400">Apr 23, 08:30</p>
+                  </div>
+                  <p class="text-sm text-gray-300 mt-1">Truck departed from Fresno packing facility</p>
+                  <p class="text-xs text-gray-500 mt-2">By: Maria Rodriguez</p>
+                </div>
+              </div>
+              
+              <div class="timeline-item pl-8 relative">
+                <div class="bg-blue-500 h-4 w-4 rounded-full absolute left-0 top-1 z-10" alt="Background image"></div>
+                <div class="bg-gray-700 rounded-lg p-4" alt="Checkpoint
+                    Apr 23, 12:45
+         ">
+                  <div class="flex justify-between items-start">
+                    <p class="font-medium text-white">Checkpoint</p>
+                    <p class="text-xs text-gray-400">Apr 23, 12:45</p>
+                  </div>
+                  <p class="text-sm text-gray-300 mt-1">Passed through Las Vegas, NV</p>
+                  <p class="text-xs text-gray-500 mt-2">GPS Auto-update</p>
+                </div>
+              </div>
+              
+              <div class="timeline-item pl-8 relative">
+                <div class="bg-blue-500 h-4 w-4 rounded-full absolute left-0 top-1 z-10" alt="Background image"></div>
+                <div class="bg-gray-700 rounded-lg p-4" alt="Temperature Alert
+                    Apr 23, 15:20
+  ">
+                  <div class="flex justify-between items-start">
+                    <p class="font-medium text-white">Temperature Alert</p>
+                    <p class="text-xs text-gray-400">Apr 23, 15:20</p>
+                  </div>
+                  <p class="text-sm text-gray-300 mt-1">Temperature rose to 11.1°C - adjusted cooling</p>
+                  <p class="text-xs text-gray-500 mt-2">System Alert</p>
+                </div>
+              </div>
+              
+              <div class="timeline-item pl-8 relative">
+                <div class="bg-yellow-500 h-4 w-4 rounded-full absolute left-0 top-1 z-10" alt="Background image"></div>
+                <div class="bg-gray-700 rounded-lg p-4" alt="Current Location
+                    Apr 24, 09:15
+   ">
+                  <div class="flex justify-between items-start">
+                    <p class="font-medium text-white">Current Location</p>
+                    <p class="text-xs text-gray-400">Apr 24, 09:15</p>
+                  </div>
+                  <p class="text-sm text-gray-300 mt-1">Approaching Grand Junction, CO</p>
+                  <p class="text-xs text-gray-500 mt-2">GPS Auto-update</p>
+                </div>
+              </div>
+              
+              <div class="timeline-item pl-8 relative">
+                <div class="bg-gray-500 h-4 w-4 rounded-full absolute left-0 top-1 z-10" alt="Background image"></div>
+                <div class="bg-gray-700 rounded-lg p-4 opacity-70" alt="Scheduled Arrival
+                    Apr 25, 14:30
+  ">
+                  <div class="flex justify-between items-start">
+                    <p class="font-medium text-white">Scheduled Arrival</p>
+                    <p class="text-xs text-gray-400">Apr 25, 14:30</p>
+                  </div>
+                  <p class="text-sm text-gray-300 mt-1">Denver distribution center</p>
+                  <p class="text-xs text-gray-500 mt-2">Estimated</p>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Contact Information -->
+          <div class="bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700 mt-6" alt="Contact info">
+            <h2 class="text-xl font-semibold text-white mb-4">Emergency Contacts</h2>
+            
+            <div class="space-y-3">
+              <div class="flex items-center justify-between bg-gray-700 rounded-lg p-3" alt="Maria Rodriguez
+                    Driver">
+                <div class="flex items-center">
+                  <div class="bg-blue-500 h-8 w-8 rounded-full flex items-center justify-center mr-3" alt="Background image">
+                    <i class="fas fa-user text-white text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="font-medium text-white">Maria Rodriguez</p>
+                    <p class="text-xs text-gray-400">Driver</p>
+                  </div>
+                </div>
+                <a href="tel:+15551234567" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full" alt="Call driver">
+                  <i class="fas fa-phone"></i>
+                </a>
+              </div>
+              
+              <div class="flex items-center justify-between bg-gray-700 rounded-lg p-3" alt="Denver Distribution
+                    Receiver">
+                <div class="flex items-center">
+                  <div class="bg-green-500 h-8 w-8 rounded-full flex items-center justify-center mr-3" alt="Background image">
+                    <i class="fas fa-warehouse text-white text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="font-medium text-white">Denver Distribution</p>
+                    <p class="text-xs text-gray-400">Receiver</p>
+                  </div>
+                </div>
+                <a href="tel:+15557654321" class="bg-green-600 hover:bg-green-700 text-white p-2 rounded-full" alt="Call receiver">
+                  <i class="fas fa-phone"></i>
+                </a>
+              </div>
+              
+              <div class="flex items-center justify-between bg-gray-700 rounded-lg p-3" alt="Dispatch
+                    24/7 Support">
+                <div class="flex items-center">
+                  <div class="bg-red-500 h-8 w-8 rounded-full flex items-center justify-center mr-3" alt="Background image">
+                    <i class="fas fa-truck text-white text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="font-medium text-white">Dispatch</p>
+                    <p class="text-xs text-gray-400">24/7 Support</p>
+                  </div>
+                </div>
+                <a href="tel:+18005551234" class="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full" alt="Call dispatch">
+                  <i class="fas fa-phone"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 mt-12" alt="Website footer">
+      <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="md:flex md:items-center md:justify-between">
+          <div class="flex justify-center md:order-2 space-x-6">
+            <a href="#" class="text-gray-400 hover:text-white">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          </div>
+          <div class="mt-8 md:mt-0 md:order-1">
+            <p class="text-center text-sm text-gray-400">
+              © 2025 AgriChain, Inc. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body></html>
