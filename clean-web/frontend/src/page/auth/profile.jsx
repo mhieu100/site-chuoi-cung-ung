@@ -1,271 +1,496 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { getAllProductLots } from '../../api/api.product'
+import {
+  Layout,
+  Card,
+  Avatar,
+  Typography,
+  Tag,
+  Row,
+  Col,
+  Statistic,
+  Tabs,
+  List,
+  Button,
+  Space,
+  Skeleton,
+  Empty,
+  Divider,
+} from 'antd'
+import {
+  PlusOutlined,
+  LinkOutlined,
+  EnvironmentOutlined,
+  CarOutlined,
+  InboxOutlined,
+  SafetyCertificateOutlined,
+  UserOutlined,
+  PlusCircleOutlined,
+  FileExcelOutlined,
+  FilePdfOutlined,
+  ArrowUpOutlined,
+  ShoppingOutlined,
+  QrcodeOutlined,
+  SafetyOutlined,
+  CarryOutOutlined
+} from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
+import LogisticsModal from '../../components/client/LogisticsModal'
+import InspectionModal from '../../components/client/InspectionModal'
+
+const { Content } = Layout
+const { Title, Paragraph, Text } = Typography
+const { TabPane } = Tabs
 
 const ProfilePage = () => {
+  const { user } = useSelector((state) => state.account)
+  const [userProducts, setUserProducts] = useState([])
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
+  const [logisticsModalVisible, setLogisticsModalVisible] = useState(false)
+  const [selectedProductId, setSelectedProductId] = useState(null)
+  const [inspectionModalVisible, setInspectionModalVisible] = useState(false)
+  
+  const isFarmer = user?.role === 'FARMER'
+
+  useEffect(() => {
+    if (isFarmer && user && user.walletAddress) {
+      fetchUserProducts()
+    }
+  }, [user.walletAddress, isFarmer])
+
+  const fetchUserProducts = async () => {
+    try {
+      setLoading(true)
+      const response = await getAllProductLots({
+        farmerWalletAddress: user.walletAddress
+      })
+      setUserProducts(Array.isArray(response) ? response : [])
+      setLoading(false)
+    } catch (error) {
+      console.error('Error fetching user products:', error)
+      setLoading(false)
+    }
+  }
+
+  const getStatusTag = (status) => {
+    const statusMap = {
+      'CREATED': { color: 'blue', text: 'Đã tạo' },
+      'PRODUCTION_COMPLETED': { color: 'green', text: 'Sản xuất hoàn thành' },
+      'REQUEST_TRANSPORTED': { color: 'purple', text: 'Yêu cầu vận chuyển' },
+      'TRANSPORTED': { color: 'cyan', text: 'Đang vận chuyển' },
+      'VERIFIED': { color: 'gold', text: 'Đã kiểm định' },
+      'SOLD': { color: 'geekblue', text: 'Đã bán' },
+      'default': { color: 'default', text: status }
+    }
+
+    const { color, text } = statusMap[status] || statusMap.default
+    return <Tag color={color}>{text}</Tag>
+  }
+
+  const formatCropType = (cropType) => {
+    const cropTypes = {
+      'VEGETABLE': 'Rau củ',
+      'FRUIT': 'Trái cây',
+      'CEREAL': 'Ngũ cốc',
+      'GRAIN': 'Ngũ cốc',
+      'BEANS': 'Đậu',
+      'ROOT': 'Củ',
+      'HERB': 'Thảo mộc',
+      'DAIRY': 'Sữa',
+      'MEAT': 'Thịt & Gia cầm',
+      'OTHER': 'Khác'
+    };
+    return cropTypes[cropType] || cropType;
+  };
+
+  const showLogisticsModal = (productId) => {
+    setSelectedProductId(productId);
+    setLogisticsModalVisible(true);
+  };
+
+  const handleCloseLogisticsModal = () => {
+    setLogisticsModalVisible(false);
+    setSelectedProductId(null);
+  };
+
+  const showInspectionModal = (productId) => {
+    setSelectedProductId(productId);
+    setInspectionModalVisible(true);
+  };
+
+  const handleCloseInspectionModal = () => {
+    setInspectionModalVisible(false);
+    setSelectedProductId(null);
+  };
+
+  const renderAccountInfo = () => (
+    <Card title="Thông tin tài khoản">
+      <Row gutter={[16, 16]}>
+        <Col span={24}>
+          <Text type="secondary">Họ và tên</Text>
+          <div><Text strong>{user.fullname || 'Chưa cung cấp'}</Text></div>
+        </Col>
+        <Col span={12}>
+          <Text type="secondary">Email</Text>
+          <div><Text strong>{user.email || 'Chưa cung cấp'}</Text></div>
+        </Col>
+        <Col span={12}>
+          <Text type="secondary">Số điện thoại</Text>
+          <div><Text strong>{user.phone || 'Chưa cung cấp'}</Text></div>
+        </Col>
+        <Col span={12}>
+          <Text type="secondary">Loại tài khoản</Text>
+          <div><Text strong>{user.role || 'Chưa xác định'}</Text></div>
+        </Col>
+        <Col span={12}>
+          <Text type="secondary">Ngày sinh</Text>
+          <div><Text strong>{user.birthday || 'Chưa cung cấp'}</Text></div>
+        </Col>
+        {isFarmer && (
+          <Col span={24}>
+            <Text type="secondary">Địa chỉ ví</Text>
+            <div><Text strong>{user.walletAddress || 'Chưa kết nối'}</Text></div>
+          </Col>
+        )}
+        <Col span={24}>
+          <Text type="secondary">Địa chỉ</Text>
+          <div><Text strong>{user.address || 'Chưa cung cấp'}</Text></div>
+        </Col>
+      </Row>
+      <Divider />
+      <Space direction="vertical" style={{ width: '100%' }}>
+        <Button type="primary" ghost block icon={<UserOutlined />}>
+          Chỉnh sửa hồ sơ
+        </Button>
+      </Space>
+    </Card>
+  );
+
+  const farmerItems = [
+    {
+      key: '1',
+      label: 'Sản phẩm',
+      children: (
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <Title level={4}>Sản phẩm nông nghiệp của bạn</Title>
+            <Button onClick={() => navigate('/newproduct')} type="primary" ghost icon={<PlusOutlined />}>
+              Thêm sản phẩm mới
+            </Button>
+          </div>
+
+          {loading ? (
+            <Card>
+              <Skeleton active avatar paragraph={{ rows: 4 }} />
+            </Card>
+          ) : userProducts.length > 0 ? (
+            <List
+              itemLayout="horizontal"
+              dataSource={userProducts}
+              renderItem={product => (
+                <List.Item
+                  actions={[
+                    <Button
+                      type="link"
+                      icon={<PlusCircleOutlined />}
+                      size="small"
+                      onClick={() => navigate(`/production-steps/${product.id}`)}
+                    >
+                      Cập nhật quá trình sản xuất
+                    </Button>,
+                    <Button
+                      type="link"
+                      icon={<CarOutlined />}
+                      size="small"
+                      onClick={() => showLogisticsModal(product.id)}
+                    >
+                      Xem quá trình vận chuyển
+                    </Button>,
+                    <Button
+                      type="link"
+                      icon={<SafetyOutlined />}
+                      size="small"
+                      onClick={() => showInspectionModal(product.id)}
+                      disabled={product.status === 'VERIFIED'}
+                    >
+                      {product.status === 'VERIFIED' ? 'Đã kiểm định' : 'Kiểm định & Chứng nhận'}
+                    </Button>,
+                    product.blockchainTxHash && <Button type="link" icon={<LinkOutlined />} size="small">Blockchain</Button>
+                  ]}
+                >
+                  <List.Item.Meta
+                    avatar={
+                      <Avatar
+                        shape="square"
+                        size={64}
+                        src={`http://localhost:8080/storage/products/${product.imageUrl}`}
+                      />
+                    }
+                    title={
+                      <Space>
+                        <Text strong>{product.productName}</Text>
+                        {getStatusTag(product.status)}
+                      </Space>
+                    }
+                    description={
+                      <Row gutter={[16, 8]}>
+                        <Col span={12}>
+                          <Text type="secondary" style={{ fontSize: '12px' }}>Loại:</Text>
+                          <div>{formatCropType(product.cropType)}</div>
+                        </Col>
+                        <Col span={12}>
+                          <Text type="secondary" style={{ fontSize: '12px' }}>Trọng lượng:</Text>
+                          <div>{product.weight} kg</div>
+                        </Col>
+                        <Col span={12}>
+                          <Text type="secondary" style={{ fontSize: '12px' }}>Ngày trồng:</Text>
+                          <div>{new Date(product.plantedDate).toLocaleDateString()}</div>
+                        </Col>
+                        <Col span={12}>
+                          <Text type="secondary" style={{ fontSize: '12px' }}>Ngày thu hoạch:</Text>
+                          <div>{new Date(product.harvestDate).toLocaleDateString()}</div>
+                        </Col>
+                      </Row>
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+          ) : (
+            <Card>
+              <Empty
+                image={<ShoppingOutlined style={{ fontSize: 64, color: '#d9d9d9' }} />}
+                description={
+                  <Space direction="vertical" align="center">
+                    <Text strong style={{ fontSize: 16, color: 'rgba(0, 0, 0, 0.45)' }}>Chưa có sản phẩm nào</Text>
+                    <Text type="secondary">Bạn chưa có sản phẩm nông nghiệp nào. Hãy thêm sản phẩm đầu tiên của mình.</Text>
+                    <Button onClick={() => navigate('/newproduct')} type="primary" icon={<PlusOutlined />}>Tạo sản phẩm nông nghiệp</Button>
+                  </Space>
+                }
+              />
+            </Card>
+          )}
+
+          <Divider />
+
+          <Row gutter={16}>
+            <Col xs={24} md={8}>
+              <Card>
+                <Statistic
+                  title="Số sản phẩm"
+                  value={userProducts.length || 0}
+                  prefix={<CarryOutOutlined style={{ color: '#52c41a' }} />}
+                  suffix={
+                    <Text type="success" style={{ fontSize: '12px' }}>
+                      <ArrowUpOutlined /> 12% so với tháng trước
+                    </Text>
+                  }
+                />
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card>
+                <Statistic
+                  title="Số lô hàng"
+                  value={28}
+                  prefix={<InboxOutlined style={{ color: '#faad14' }} />}
+                  suffix={
+                    <Text type="success" style={{ fontSize: '12px' }}>
+                      <ArrowUpOutlined /> 5% so với tháng trước
+                    </Text>
+                  }
+                />
+              </Card>
+            </Col>
+            <Col xs={24} md={8}>
+              <Card>
+                <Statistic
+                  title="Chứng chỉ"
+                  value={3}
+                  prefix={<SafetyCertificateOutlined style={{ color: '#1677ff' }} />}
+                  suffix={
+                    <Text type="secondary" style={{ fontSize: '12px' }}>
+                      Hữu cơ, Non-GMO, Fair Trade
+                    </Text>
+                  }
+                />
+              </Card>
+            </Col>
+          </Row>
+
+          <Divider />
+
+          <Card title="Hoạt động gần đây" extra={<a href="#">Xem tất cả →</a>}>
+            <List
+              itemLayout="horizontal"
+              dataSource={[
+                {
+                  icon: <ShoppingOutlined style={{ color: '#52c41a' }} />,
+                  title: 'Tạo lô sản phẩm mới',
+                  description: 'Cà chua - Giống heirloom (Lô #TF-2025-0628)',
+                  time: 'Hôm nay, 10:24 AM'
+                },
+                {
+                  icon: <ShoppingOutlined style={{ color: '#1677ff' }} />,
+                  title: 'Hoàn thành giao hàng',
+                  description: 'Cho chợ nông sản Portland (12 món)',
+                  time: 'Hôm qua, 3:45 PM'
+                },
+                {
+                  icon: <QrcodeOutlined style={{ color: '#faad14' }} />,
+                  title: 'Quét mã QR',
+                  description: 'Bởi siêu thị Whole Foods - Seattle',
+                  time: '2 ngày trước'
+                },
+                {
+                  icon: <SafetyOutlined style={{ color: '#722ed1' }} />,
+                  title: 'Cập nhật chứng chỉ',
+                  description: 'Gia hạn chứng chỉ hữu cơ USDA được chấp thuận',
+                  time: '25 tháng 6, 2025'
+                }
+              ]}
+              renderItem={item => (
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={
+                      <Avatar style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)' }} icon={item.icon} />
+                    }
+                    title={<Text strong>{item.title}</Text>}
+                    description={
+                      <>
+                        <div>{item.description}</div>
+                        <Text type="secondary" style={{ fontSize: '12px' }}>{item.time}</Text>
+                      </>
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+          </Card>
+        </div>
+      ),
+    },
+    {
+      key: '2',
+      label: 'Tài khoản',
+      children: (
+        <div>
+          {renderAccountInfo()}
+
+          <Divider />
+
+          <Card title="Nông trại đã kết nối">
+            <List
+              itemLayout="horizontal"
+              dataSource={[
+                {
+                  name: 'Nông trại hữu cơ Green Valley',
+                  role: 'Chủ sở hữu',
+                  avatar: 'https://images.unsplash.com/photo-1654624747708-13705c045a4b?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=100&amp;q=80'
+                },
+                {
+                  name: 'Hợp tác xã nông dân Willamette',
+                  role: 'Thành viên',
+                  avatar: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=100&amp;q=80'
+                }
+              ]}
+              renderItem={item => (
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={<Avatar src={item.avatar} />}
+                    title={item.name}
+                    description={item.role}
+                  />
+                </List.Item>
+              )}
+            />
+            <Button type="primary" ghost block icon={<PlusCircleOutlined />} style={{ marginTop: 16 }}>
+              Kết nối nông trại mới
+            </Button>
+          </Card>
+
+          <Divider />
+
+          <Card title="Xuất dữ liệu">
+            <Paragraph>Tải xuống dữ liệu hoạt động nông nghiệp và chuỗi cung ứng để lưu trữ hoặc phân tích.</Paragraph>
+            <Space direction="vertical" style={{ width: '100%' }}>
+              <Button block icon={<FileExcelOutlined />}>
+                Xuất dạng CSV
+              </Button>
+              <Button block icon={<FilePdfOutlined />}>
+                Xuất dạng PDF
+              </Button>
+            </Space>
+          </Card>
+        </div>
+      )
+    }
+  ];
+
   return (
-    <>
+    <Layout>
+      <Content style={{ padding: '0 50px' }}>
+        <div style={{
+          background: 'linear-gradient(to right, #f0f2f5, #e6f7ff)',
+          padding: '32px 0',
+          marginBottom: 24
+        }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+            <Row gutter={24} align="middle">
+              <Col xs={24} md={6} style={{ textAlign: 'center' }}>
+                <Avatar
+                  size={120}
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1350&amp;q=80"
+                  style={{ border: '4px solid white', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                />
+              </Col>
+              <Col xs={24} md={18}>
+                <Title level={2} style={{ marginBottom: 8 }}>
+                  {user.fullname || 'User Name'}
+                </Title>
+                <Space align="center" style={{ marginBottom: 16 }}>
+                  <Tag color="green">{user.role || 'User'}</Tag>
+                  <Text>
+                    <EnvironmentOutlined style={{ color: '#52c41a', marginRight: 8 }} />
+                    {user.address || 'Location'}
+                  </Text>
+                </Space>
+                {isFarmer && (
+                  <Paragraph style={{ maxWidth: 600 }}>
+                    Nông dân trồng rau hữu cơ từ năm 2018. Chuyên về cà chua heirloom và rau xanh. Cam kết với các phương pháp bền vững và chuỗi cung ứng minh bạch.
+                  </Paragraph>
+                )}
+              </Col>
+            </Row>
+          </div>
+        </div>
 
-      <div className="profile-header py-12" alt="Profile header">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center">
-            <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gray-200 overflow-hidden border-4 border-white shadow-lg mb-4 md:mb-0 md:mr-8" alt="Profile photo">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1350&amp;q=80" alt="User photo" className="w-full h-full object-cover" />
-            </div>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', marginBottom: 24 }}>
+          {isFarmer ? (
+            <Tabs defaultActiveKey="1" items={farmerItems} size="large" />
+          ) : (
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-1">Maria Rodriguez</h1>
-              <div className="flex items-center mb-4">
-                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium mr-3" alt="Farmer">Farmer</span>
-                <span className="text-gray-600"><i className="fas fa-map-marker-alt text-green-500 mr-1"></i> Portland, OR</span>
-              </div>
-              <p className="text-gray-600 max-w-lg">Organic vegetable farmer since 2018. Specializing in heirloom tomatoes and leafy greens. Committed to sustainable practices and transparent supply chains.</p>
+              {renderAccountInfo()}
             </div>
-          </div>
+          )}
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="stat-card bg-white rounded-lg p-6 shadow-sm transition duration-300" alt="Products stat">
-                <div className="flex items-center">
-                  <div className="p-3 rounded-full bg-green-50 text-green-600 mr-4" alt="Background image">
-                    <i className="fas fa-carrot text-xl"></i>
-                  </div>
-                  <div>
-                    <p className="text-gray-500 text-sm">Products</p>
-                    <h3 className="text-2xl font-bold">142</h3>
-                    <p className="text-green-600 text-xs flex items-center">
-                      <i className="fas fa-arrow-up mr-1"></i> 12% from last month
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="stat-card bg-white rounded-lg p-6 shadow-sm transition duration-300" alt="Batches stat">
-                <div className="flex items-center">
-                  <div className="p-3 rounded-full bg-amber-50 text-amber-600 mr-4" alt="Background image">
-                    <i className="fas fa-boxes text-xl"></i>
-                  </div>
-                  <div>
-                    <p className="text-gray-500 text-sm">Batches</p>
-                    <h3 className="text-2xl font-bold">28</h3>
-                    <p className="text-green-600 text-xs flex items-center">
-                      <i className="fas fa-arrow-up mr-1"></i> 5% from last month
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="stat-card bg-white rounded-lg p-6 shadow-sm transition duration-300" alt="Certifications stat">
-                <div className="flex items-center">
-                  <div className="p-3 rounded-full bg-blue-50 text-blue-600 mr-4" alt="Background image">
-                    <i className="fas fa-certificate text-xl"></i>
-                  </div>
-                  <div>
-                    <p className="text-gray-500 text-sm">Certifications</p>
-                    <h3 className="text-2xl font-bold">3</h3>
-                    <p className="text-green-600 text-xs">
-                      USDA Organic, Non-GMO, Fair Trade
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+        {/* Logistics Modal */}
+        <LogisticsModal
+          visible={logisticsModalVisible}
+          onClose={handleCloseLogisticsModal}
+          productId={selectedProductId}
+        />
 
-            <div className="bg-white rounded-lg shadow-sm p-6" alt="Activity chart">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-bold text-gray-800">Monthly Activity</h2>
-                <select className="bg-gray-50 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg text-sm" alt="Last 30 days
-                Last 90 days
-            ">
-                  <option>Last 30 days</option>
-                  <option>Last 90 days</option>
-                  <option>This year</option>
-                </select>
-              </div>
-              <div className="chart-container" alt="Activity chart">
-                <div className="flex items-end h-40 border-b border-l border-gray-200">
-                  <div className="flex-1 flex flex-col items-center px-1">
-                    <div className="bg-green-400 w-8 rounded-t" style={{ height: '60%' }} alt="Background image"></div>
-                    <span className="text-xs text-gray-500 mt-1">Mon</span>
-                  </div>
-                  <div className="flex-1 flex flex-col items-center px-1">
-                    <div className="bg-green-400 w-8 rounded-t" style={{ height: '40%' }} alt="Background image"></div>
-                    <span className="text-xs text-gray-500 mt-1">Tue</span>
-                  </div>
-                  <div className="flex-1 flex flex-col items-center px-1">
-                    <div className="bg-green-400 w-8 rounded-t" style={{ height: '80%' }} alt="Background image"></div>
-                    <span className="text-xs text-gray-500 mt-1">Wed</span>
-                  </div>
-                  <div className="flex-1 flex flex-col items-center px-1">
-                    <div className="bg-green-400 w-8 rounded-t" style={{ height: '30%' }} alt="Background image"></div>
-                    <span className="text-xs text-gray-500 mt-1">Thu</span>
-                  </div>
-                  <div className="flex-1 flex flex-col items-center px-1">
-                    <div className="bg-green-400 w-8 rounded-t" style={{ height: '70%' }} alt="Background image"></div>
-                    <span className="text-xs text-gray-500 mt-1">Fri</span>
-                  </div>
-                  <div className="flex-1 flex flex-col items-center px-1">
-                    <div className="bg-green-400 w-8 rounded-t" style={{ height: '90%' }} alt="Background image"></div>
-                    <span className="text-xs text-gray-500 mt-1">Sat</span>
-                  </div>
-                  <div className="flex-1 flex flex-col items-center px-1">
-                    <div className="bg-green-400 w-8 rounded-t" style={{ height: '50%' }} alt="Background image"></div>
-                    <span className="text-xs text-gray-500 mt-1">Sun</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden" alt="Recent activity">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-lg font-bold text-gray-800">Recent Activity</h2>
-              </div>
-              <div className="divide-y divide-gray-200">
-                <div className="activity-item p-6 hover:transition-colors duration-200" alt="Activity item">
-                  <div className="flex">
-                    <div className="flex-shrink-0 mr-4">
-                      <div className="p-2 bg-green-100 rounded-full text-green-600" alt="Background image">
-                        <i className="fas fa-seedling"></i>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-800">Created new product batch</p>
-                      <p className="text-sm text-gray-500 mb-1">Tomatoes - Heirloom Variety (Batch #TF-2025-0628)</p>
-                      <p className="text-xs text-gray-400">Today, 10:24 AM</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="activity-item p-6 hover:transition-colors duration-200" alt="Activity item">
-                  <div className="flex">
-                    <div className="flex-shrink-0 mr-4">
-                      <div className="p-2 bg-blue-100 rounded-full text-blue-600" alt="Background image">
-                        <i className="fas fa-truck"></i>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-800">Completed delivery</p>
-                      <p className="text-sm text-gray-500 mb-1">To Portland Farmers Market (12 items)</p>
-                      <p className="text-xs text-gray-400">Yesterday, 3:45 PM</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="activity-item p-6 hover:transition-colors duration-200" alt="Activity item">
-                  <div className="flex">
-                    <div className="flex-shrink-0 mr-4">
-                      <div className="p-2 bg-amber-100 rounded-full text-amber-600" alt="Background image">
-                        <i className="fas fa-qrcode"></i>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-800">QR code scan</p>
-                      <p className="text-sm text-gray-500 mb-1">By Whole Foods Market - Seattle</p>
-                      <p className="text-xs text-gray-400">2 days ago</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="activity-item p-6 hover:transition-colors duration-200" alt="Activity item">
-                  <div className="flex">
-                    <div className="flex-shrink-0 mr-4">
-                      <div className="p-2 bg-purple-100 rounded-full text-purple-600" alt="Background image">
-                        <i className="fas fa-certificate"></i>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-800">Certification updated</p>
-                      <p className="text-sm text-gray-500 mb-1">USDA Organic renewal approved</p>
-                      <p className="text-xs text-gray-400">June 25, 2025</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="p-4 border-t border-gray-200 text-center">
-                <a href="#" className="text-sm font-medium text-green-600 hover:text-green-800" alt="View all">View all activity →</a>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm p-6" alt="Account info">
-              <h2 className="text-lg font-bold text-gray-800 mb-4">Account Information</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Full Name</label>
-                  <p className="text-gray-800">Maria Rodriguez</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Email</label>
-                  <p className="text-gray-800"><a href="/cdn-cgi/l/email-protection" className="__cf_email__" data-cfemail="bdd0dccfd4dcfddacfd8d8d3cbdcd1d1d8c4dbdccfd0ce93ded2d0">[email&#160;protected]</a></p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Phone</label>
-                  <p className="text-gray-800">(503) 555-0198</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Account Type</label>
-                  <p className="text-gray-800">Farmer (Verified)</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Member Since</label>
-                  <p className="text-gray-800">March 12, 2020</p>
-                </div>
-              </div>
-              <div className="mt-6 space-y-3">
-                <button className="w-full bg-green-50 hover:bg-green-100 text-green-700 px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center" alt="Edit profile">
-                  <i className="fas fa-user-edit mr-2"></i>
-                  Edit Profile
-                </button>
-                <button className="w-full bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center" alt="Change password">
-                  <i className="fas fa-key mr-2"></i>
-                  Change Password
-                </button>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-sm p-6" alt="Connected farms">
-              <h2 className="text-lg font-bold text-gray-800 mb-4">Connected Farms</h2>
-              <div className="space-y-4">
-                <div className="flex items-center">
-                  <div className="w-10 h-10 rounded-full bg-gray-200 mr-3 overflow-hidden" alt="Farm logo">
-                    <img src="https://images.unsplash.com/photo-1654624747708-13705c045a4b?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=100&amp;q=80" alt="Farm photo" className="w-full h-full object-cover" loading="lazy" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-800">Green Valley Organic Farm</p>
-                    <p className="text-xs text-gray-500">Owner</p>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-10 h-10 rounded-full bg-gray-200 mr-3 overflow-hidden" alt="Farm logo">
-                    <img src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=100&amp;q=80" alt="Farm photo" className="w-full h-full object-cover" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-800">Willamette Growers Cooperative</p>
-                    <p className="text-xs text-gray-500">Member</p>
-                  </div>
-                </div>
-              </div>
-              <button className="w-full mt-4 bg-green-50 hover:bg-green-100 text-green-700 px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center" alt="Manage farms">
-                <i className="fas fa-plus-circle mr-2"></i>
-                Connect New Farm
-              </button>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-sm p-6" alt="Export data">
-              <h2 className="text-lg font-bold text-gray-800 mb-4">Export Data</h2>
-              <p className="text-sm text-gray-600 mb-4">Download your farming activity and supply chain data for records or analysis.</p>
-              <div className="space-y-3">
-                <button className="w-full bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center" alt="Export CSV">
-                  <i className="fas fa-file-csv mr-2"></i>
-                  Export as CSV
-                </button>
-                <button className="w-full bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center" alt="Export PDF">
-                  <i className="fas fa-file-pdf mr-2"></i>
-                  Export as PDF
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+        <InspectionModal
+          visible={inspectionModalVisible}
+          onClose={handleCloseInspectionModal}
+          productId={selectedProductId}
+        />
+      </Content>
+    </Layout>
   )
 }
 

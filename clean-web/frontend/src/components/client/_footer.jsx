@@ -2,44 +2,44 @@ import React from 'react'
 
 const Footer = () => {
     return (
-        <> <footer class="bg-gray-800" alt="About Blog">
-            <div class="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
-                <nav class="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
-                    <div class="px-5 py-2">
-                        <a href="#" class="text-base text-gray-300 hover:text-white">About</a>
+        <> <footer className="bg-gray-800" alt="Giới thiệu Tin tức">
+            <div className="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
+                <nav className="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
+                    <div className="px-5 py-2">
+                        <a href="#" className="text-base text-gray-300 hover:text-white">Giới thiệu</a>
                     </div>
-                    <div class="px-5 py-2">
-                        <a href="#" class="text-base text-gray-300 hover:text-white">Blog</a>
+                    <div className="px-5 py-2">
+                        <a href="#" className="text-base text-gray-300 hover:text-white">Tin tức</a>
                     </div>
-                    <div class="px-5 py-2">
-                        <a href="#" class="text-base text-gray-300 hover:text-white">Press</a>
+                    <div className="px-5 py-2">
+                        <a href="#" className="text-base text-gray-300 hover:text-white">Báo chí</a>
                     </div>
-                    <div class="px-5 py-2">
-                        <a href="#" class="text-base text-gray-300 hover:text-white">Careers</a>
+                    <div className="px-5 py-2">
+                        <a href="#" className="text-base text-gray-300 hover:text-white">Tuyển dụng</a>
                     </div>
-                    <div class="px-5 py-2">
-                        <a href="#" class="text-base text-gray-300 hover:text-white">Privacy</a>
+                    <div className="px-5 py-2">
+                        <a href="#" className="text-base text-gray-300 hover:text-white">Quyền riêng tư</a>
                     </div>
-                    <div class="px-5 py-2">
-                        <a href="#" class="text-base text-gray-300 hover:text-white">Terms</a>
+                    <div className="px-5 py-2">
+                        <a href="#" className="text-base text-gray-300 hover:text-white">Điều khoản</a>
                     </div>
                 </nav>
-                <div class="mt-8 flex justify-center space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-white">
-                        <i class="fab fa-facebook-f"></i>
+                <div className="mt-8 flex justify-center space-x-6">
+                    <a href="#" className="text-gray-400 hover:text-white">
+                        <i className="fab fa-facebook-f"></i>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-white">
-                        <i class="fab fa-instagram"></i>
+                    <a href="#" className="text-gray-400 hover:text-white">
+                        <i className="fab fa-instagram"></i>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-white">
-                        <i class="fab fa-twitter"></i>
+                    <a href="#" className="text-gray-400 hover:text-white">
+                        <i className="fab fa-twitter"></i>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-white">
-                        <i class="fab fa-linkedin-in"></i>
+                    <a href="#" className="text-gray-400 hover:text-white">
+                        <i className="fab fa-linkedin-in"></i>
                     </a>
                 </div>
-                <p class="mt-8 text-center text-base text-gray-400">
-                    © 2025 AgriTrace, Inc. All rights reserved.
+                <p className="mt-8 text-center text-base text-gray-400">
+                    © 2025 AgriTrace, Inc. Đã đăng ký bản quyền.
                 </p>
             </div>
         </footer></>

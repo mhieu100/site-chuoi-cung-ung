@@ -109,3 +109,12 @@
   background-color: #e5e7eb;
   border-radius: 2px;
 }
+
+/* Kiểu dáng cho hàng đã kiểm định trong bảng */
+.ant-table-row-verified {
+  background-color: rgba(82, 196, 26, 0.05);
+}
+
+.ant-table-row-verified:hover > td {
+  background-color: rgba(82, 196, 26, 0.1) !important;
+}

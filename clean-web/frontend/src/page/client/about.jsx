@@ -5,29 +5,29 @@ const AboutPage = () => {
         <><div class="relative hero-pattern h-96 flex items-center" alt="Farm workers">
             <div class="absolute inset-0 bg-black opacity-40" alt="Background image"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-white">
-                <h1 class="text-4xl md:text-5xl font-bold mb-4">Transforming Agriculture Through Transparency</h1>
-                <p class="text-xl max-w-2xl">We're building a future where every food purchase supports sustainable farming and fair labor practices.</p>
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Thay đổi nông nghiệp thông qua tính minh bạch</h1>
+                <p class="text-xl max-w-2xl">Chúng tôi đang xây dựng một tương lai nơi mỗi giao dịch mua thực phẩm đều hỗ trợ nông nghiệp bền vững và thực hành lao động công bằng.</p>
             </div>
         </div>
 
-            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" alt="Our mission">
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" alt="Sứ mệnh của chúng tôi">
                 <div class="grid md:grid-cols-2 gap-16">
                     <div>
-                        <h2 class="text-3xl font-bold text-gray-800 mb-6">Our Mission</h2>
-                        <p class="text-gray-600 mb-6">CleanFood exists to create radical transparency in our food systems by connecting consumers directly with the origin of their food through blockchain technology.</p>
-                        <div class="bg-green-50 rounded-xl p-6 mb-6" alt="Mission statement">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-6">Sứ mệnh của chúng tôi</h2>
+                        <p class="text-gray-600 mb-6">CleanFood tồn tại để tạo ra sự minh bạch triệt để trong hệ thống thực phẩm bằng cách kết nối trực tiếp người tiêu dùng với nguồn gốc của thực phẩm thông qua công nghệ blockchain.</p>
+                        <div class="bg-green-50 rounded-xl p-6 mb-6" alt="Tuyên bố sứ mệnh">
                             <i class="fas fa-bullseye text-green-400 text-3xl mb-4"></i>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Farm to Fork Traceability</h3>
-                            <p class="text-gray-600">Our platform tracks every step of the supply chain, ensuring ethical sourcing and sustainable practices from seed to store.</p>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Truy xuất từ nông trại đến bàn ăn</h3>
+                            <p class="text-gray-600">Nền tảng của chúng tôi theo dõi từng bước của chuỗi cung ứng, đảm bảo nguồn gốc đạo đức và thực hành bền vững từ hạt giống đến cửa hàng.</p>
                         </div>
                     </div>
                     <div>
-                        <h2 class="text-3xl font-bold text-gray-800 mb-6">Our Vision</h2>
-                        <p class="text-gray-600 mb-6">We envision a world where consumers can make informed choices that reward responsible farming and drive systemic change in agriculture.</p>
-                        <div class="bg-blue-50 rounded-xl p-6" alt="Vision statement">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-6">Tầm nhìn của chúng tôi</h2>
+                        <p class="text-gray-600 mb-6">Chúng tôi hình dung một thế giới nơi người tiêu dùng có thể đưa ra lựa chọn có hiểu biết, khen thưởng canh tác có trách nhiệm và thúc đẩy thay đổi hệ thống trong nông nghiệp.</p>
+                        <div class="bg-blue-50 rounded-xl p-6" alt="Tuyên bố tầm nhìn">
                             <i class="fas fa-globe-americas text-blue-400 text-3xl mb-4"></i>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Global Impact</h3>
-                            <p class="text-gray-600">By 2030, we aim to have 50% of US grocery products on our platform, creating market incentives for sustainable farming worldwide.</p>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Tác động toàn cầu</h3>
+                            <p class="text-gray-600">Đến năm 2030, chúng tôi hướng đến việc có 50% sản phẩm tạp hóa của Hoa Kỳ trên nền tảng của chúng tôi, tạo ra động lực thị trường cho canh tác bền vững trên toàn thế giới.</p>
                         </div>
                     </div>
                 </div>

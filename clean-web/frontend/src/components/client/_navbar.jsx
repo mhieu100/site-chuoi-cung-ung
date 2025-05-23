@@ -1,48 +1,201 @@
-import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux';
+import { callLogout } from '../../api/api.auth';
+import { setLogoutAction } from '../../redux/slice/accountSlide';
+import { useDisconnect } from 'wagmi';
+import { Layout, Menu, Button, Dropdown, Avatar, Space, message, Drawer } from 'antd';
+import { UserOutlined, LogoutOutlined, MenuOutlined } from '@ant-design/icons';
+
+const { Header } = Layout;
 
 const Navbar = () => {
     const location = useLocation();
-    
-    const isActive = (path) => {
-        return location.pathname === path ? "text-green-700" : "text-gray-500";
-    }
+    const user = useSelector((state) => state.account.user);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { disconnect } = useDisconnect();
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    const menuItems = [
+        {
+            key: '/',
+            label: <Link to='/'>Trang chủ</Link>,
+        },
+        {
+            key: '/newproduct',
+            label: <Link to='/newproduct'>Nông sản mới</Link>,
+        },
+        {
+            key: '/store',
+            label: <Link to='/store'>Cửa hàng</Link>,
+        },
+        {
+            key: '/about',
+            label: <Link to='/about'>Giới thiệu</Link>,
+        },
+        {
+            key: '/blog',
+            label: <Link to='/blog'>Tin tức</Link>,
+        },
+        {
+            key: '/contact',
+            label: <Link to='/contact'>Liên hệ</Link>,
+        },
+    ];
+
+    const handleLogout = async () => {
+        const res = await callLogout();
+        if (res) {
+            disconnect();
+            dispatch(setLogoutAction({}));
+            message.success('Đăng xuất thành công');
+            navigate('/');
+        }
+    };
+
+    const userMenuItems = [
+        {
+            key: 'profile',
+            icon: <UserOutlined />,
+            label: <Link to='/profile'>Hồ sơ cá nhân</Link>,
+        },
+        {
+            key: 'logout',
+            icon: <LogoutOutlined />,
+            label: 'Đăng xuất',
+            onClick: handleLogout,
+        },
+    ];
 
     return (
-        <>
-            <nav class="bg-white shadow-md" alt="AgriTraceH">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 flex items-center">
-                                <i class="fas fa-leaf text-green-600 text-2xl mr-2"></i>
-                                <span class="text-xl font-bold text-green-800">AgriTrace</span>
+        <Layout>
+            <Header 
+                className="bg-white px-0 h-16 flex items-center" 
+                style={{ 
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 1000,
+                    width: '100%',
+                    padding: 0
+                }}
+            >
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center">
+                            <div className="flex-shrink-0 flex items-center">
+                                <i className="fas fa-leaf text-green-600 text-2xl mr-2"></i>
+                                <span className="text-xl font-bold text-green-800">AgriTrace</span>
+                            </div>
+                            {/* Desktop Menu */}
+                            <div className="hidden md:block ml-6">
+                                <Menu
+                                    mode="horizontal"
+                                    selectedKeys={[location.pathname]}
+                                    items={menuItems}
+                                    style={{
+                                        border: 'none',
+                                        backgroundColor: 'transparent',
+                                        fontWeight: 500
+                                    }}
+                                    className="flex-1"
+                                />
                             </div>
                         </div>
-                        <div className="hidden md:ml-6 md:flex md:items-center md:space-x-8">
-                            <Link to={'/'} className={`${isActive('/')} hover:text-green-900 px-3 py-2 text-sm font-medium`}>Home</Link>
-                            <Link to={'/profile'} className={`${isActive('/profile')} hover:text-green-700 px-3 py-2 text-sm font-medium`}>Profile</Link>
-                            <Link to={'/product'} className={`${isActive('/product')} hover:text-green-700 px-3 py-2 text-sm font-medium`}>Product</Link>
-                            <Link to={'/blog'} className={`${isActive('/blog')} hover:text-green-700 px-3 py-2 text-sm font-medium`}>Blog</Link>
-                            <Link to={'/store'} className={`${isActive('/store')} hover:text-green-700 px-3 py-2 text-sm font-medium`}>Store</Link>
-                            <Link to={'/about'} className={`${isActive('/about')} hover:text-green-700 px-3 py-2 text-sm font-medium`}>About</Link>
-                            <Link to={'/contact'} className={`${isActive('/contact')} hover:text-green-700 px-3 py-2 text-sm font-medium`}>Contact</Link>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium" alt="Sign In">
-                                Sign In
-                            </button>
-                            <div class="relative">
-                                <button class="bg-green-50 hover:bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium flex items-center" alt="User menu">
-                                    <i class="fas fa-user-circle mr-2"></i>
-                                    <span>My Account</span>
-                                </button>
-                            </div>
+
+                        {/* Auth Buttons / User Actions */}
+                        <div className="flex items-center">
+                            {/* Mobile Menu Button */}
+                            <Button
+                                type="text"
+                                icon={<MenuOutlined />}
+                                onClick={() => setMobileMenuOpen(true)}
+                                className="md:hidden mr-2"
+                                size="large"
+                            />
+
+                            {user.fullname ? (
+                                <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+                                    <Button type="text" className="flex items-center">
+                                        <Space>
+                                            <Avatar
+                                                style={{ backgroundColor: '#52c41a' }}
+                                                icon={<UserOutlined />}
+                                                size="small"
+                                            />
+                                            <span className="text-green-700 font-medium hidden sm:inline-block">
+                                                {user.fullname}
+                                            </span>
+                                        </Space>
+                                    </Button>
+                                </Dropdown>
+                            ) : (
+                                <Button
+                                    type="primary"
+                                    onClick={() => navigate('/login')}
+                                    style={{
+                                        backgroundColor: '#52c41a',
+                                        borderColor: '#52c41a'
+                                    }}
+                                >
+                                    Đăng nhập
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </div>
-            </nav>
-        </>
+            </Header>
+            <div style={{ paddingTop: '64px' }}></div>
+
+            {/* Mobile menu drawer */}
+            <Drawer
+                title="Menu"
+                placement="left"
+                onClose={() => setMobileMenuOpen(false)}
+                open={mobileMenuOpen}
+                bodyStyle={{ padding: 0 }}
+            >
+                <Menu
+                    mode="vertical"
+                    selectedKeys={[location.pathname]}
+                    items={menuItems}
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{ border: 'none' }}
+                />
+
+                {user.fullname && (
+                    <div className="px-4 py-4 border-t">
+                        <Space direction="vertical" style={{ width: '100%' }}>
+                            <Button
+                                type="text"
+                                icon={<UserOutlined />}
+                                onClick={() => {
+                                    navigate('/profile');
+                                    setMobileMenuOpen(false);
+                                }}
+                                block
+                                className="text-left"
+                            >
+                                Hồ sơ cá nhân
+                            </Button>
+                            <Button
+                                type="text"
+                                danger
+                                icon={<LogoutOutlined />}
+                                onClick={handleLogout}
+                                block
+                                className="text-left"
+                            >
+                                Đăng xuất
+                            </Button>
+                        </Space>
+                    </div>
+                )}
+            </Drawer>
+        </Layout>
     )
 }
 
