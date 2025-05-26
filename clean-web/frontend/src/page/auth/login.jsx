@@ -42,7 +42,7 @@ const LoginPage = () => {
         if (res.role === 'INSPECTOR') {
           navigate('/inspection/dashboard');
         } else if (res.role === 'TRANSPORTER') {
-          navigate('/logistics-portal/dashboard');
+          navigate('/logistics-portal/');
         } else {
           // Default for FARMER or other roles
           navigate(from, { replace: true });

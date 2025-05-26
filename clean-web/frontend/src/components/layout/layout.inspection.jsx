@@ -6,7 +6,9 @@ import {
   UserOutlined,
   FileSearchOutlined,
   UnorderedListOutlined,
-  CarOutlined
+  CarOutlined,
+  TeamOutlined,
+  AppstoreOutlined
 } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -37,8 +39,18 @@ const LayoutInspection = () => {
     },
     {
       path: '/inspection/all-inspection',
-      name: 'Danh sách lô hàng cần kiểm định',
+      name: 'Lô hàng cần kiểm định',
       icon: <UnorderedListOutlined />,
+    },
+    {
+      path: '/inspection/all-products',
+      name: 'Tất cả sản phẩm',
+      icon: <AppstoreOutlined />,
+    },
+    {
+      path: '/inspection/all-users',
+      name: 'Quản lý người dùng',
+      icon: <TeamOutlined />,
     },
     {
       path: '/inspection/profile',

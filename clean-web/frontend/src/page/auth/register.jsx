@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './auth.css'
 import { useAccount, useDisconnect } from 'wagmi';
 import { useSelector } from 'react-redux';
-import { message } from 'antd';
+import { message, Space } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { callRegister } from '../../api/api.auth';
 
@@ -20,13 +20,18 @@ const RegisterPage = () => {
     }
   }, []);
 
+  const handleCancel = () => {
+    disconnect();
+    navigate('/');
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!fullname || !email) {
       message.error('Vui lòng nhập đầy đủ thông tin');
       return;
     }
-    
+
     try {
       await callRegister(address, fullname, email);
       message.success('Đăng ký thành công');
@@ -81,16 +86,16 @@ const RegisterPage = () => {
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" data-id="jgu2g6mj" data-line="58-60">
                   <i className="fas fa-user text-gray-400" data-id="3tkl4x89" data-line="59-59"></i>
                 </div>
-                <input 
-                  type="text" 
-                  id="fullname" 
+                <input
+                  type="text"
+                  id="fullname"
                   value={fullname}
                   onChange={(e) => setFullname(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" 
-                  placeholder="Nhập tên người dùng" 
-                  alt="Fullname input" 
-                  data-id="293hucg0" 
-                  data-line="61-61" 
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  placeholder="Nhập tên người dùng"
+                  alt="Fullname input"
+                  data-id="293hucg0"
+                  data-line="61-61"
                 />
               </div>
             </div>
@@ -101,31 +106,38 @@ const RegisterPage = () => {
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" data-id="jgu2g6mj" data-line="58-60">
                   <i className="fas fa-envelope text-gray-400" data-id="3tkl4x89" data-line="59-59"></i>
                 </div>
-                <input 
-                  type="email" 
-                  id="email" 
+                <input
+                  type="email"
+                  id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" 
-                  placeholder="Nhập email" 
-                  alt="Email input" 
-                  data-id="293hucg0" 
-                  data-line="61-61" 
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  placeholder="Nhập email"
+                  alt="Email input"
+                  data-id="293hucg0"
+                  data-line="61-61"
                 />
               </div>
             </div>
 
             <div data-id="tqx30f8h" data-line="78-82">
-              <button 
-                type="submit" 
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" 
-                data-id="32vgmr5h" 
-                data-line="79-81"
-              >
-                Đăng ký
-              </button>
+              <Space>
+
+
+
+                <button
+                  type="submit"
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  data-id="32vgmr5h"
+                  data-line="79-81"
+                >
+                  Đăng ký
+                </button>
+                <button className=' w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500' onClick={handleCancel} >Hủy bỏ</button>
+              </Space>
             </div>
           </form>
+
         </div>
       </div>
     </div>

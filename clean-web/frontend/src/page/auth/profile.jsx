@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { getAllProductLots } from '../../api/api.product'
+import { updateUser, getUserByWalletAddress } from '../../api/api.user'
 import {
   Layout,
   Card,
@@ -17,6 +18,12 @@ import {
   Skeleton,
   Empty,
   Divider,
+  Tooltip,
+  message,
+  Modal,
+  Form,
+  Input,
+  DatePicker
 } from 'antd'
 import {
   PlusOutlined,
@@ -33,32 +40,145 @@ import {
   ShoppingOutlined,
   QrcodeOutlined,
   SafetyOutlined,
-  CarryOutOutlined
+  CarryOutOutlined,
+  SendOutlined,
+  SwapOutlined,
+  WalletOutlined,
+  LoadingOutlined,
+  CopyOutlined,
+  SaveOutlined
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import LogisticsModal from '../../components/client/LogisticsModal'
 import InspectionModal from '../../components/client/InspectionModal'
+import Web3 from 'web3'
+import moment from 'moment'
+import { format } from 'date-fns';
+import vi from 'date-fns/locale/vi';
+import { fetchAccount, updateUserInfo } from '../../redux/slice/accountSlide';
 
 const { Content } = Layout
 const { Title, Paragraph, Text } = Typography
 const { TabPane } = Tabs
 
+const copyToClipboard = (text) => {
+  navigator.clipboard.writeText(text);
+  message.success('Đã sao chép!');
+};
+
 const ProfilePage = () => {
   const { user } = useSelector((state) => state.account)
+
+  const dispatch = useDispatch()
   const [userProducts, setUserProducts] = useState([])
   const [loading, setLoading] = useState(false)
+  const [transactionsLoading, setTransactionsLoading] = useState(false)
+  const [transactions, setTransactions] = useState([])
+  const [walletBalance, setWalletBalance] = useState('0')
+  const [balanceLoading, setBalanceLoading] = useState(false)
   const navigate = useNavigate()
   const [logisticsModalVisible, setLogisticsModalVisible] = useState(false)
   const [selectedProductId, setSelectedProductId] = useState(null)
   const [inspectionModalVisible, setInspectionModalVisible] = useState(false)
-  
+  const [editModalVisible, setEditModalVisible] = useState(false)
+  const [editForm] = Form.useForm()
+  const [updating, setUpdating] = useState(false)
+
   const isFarmer = user?.role === 'FARMER'
 
-  useEffect(() => {
-    if (isFarmer && user && user.walletAddress) {
-      fetchUserProducts()
+  // Initialize web3 instance
+  const getWeb3Instance = () => {
+    if (window.ethereum) {
+      return new Web3(window.ethereum);
+    } else {
+      message.error('Vui lòng cài đặt ví MetaMask để xem lịch sử giao dịch');
+      return null;
     }
-  }, [user.walletAddress, isFarmer])
+  };
+
+  useEffect(() => {
+    dispatch(fetchAccount(user.walletAddress))
+    if (user && user.walletAddress) {
+      if (isFarmer) {
+        fetchUserProducts();
+      }
+      fetchWalletBalance();
+      fetchTransactionHistory();
+    }
+  }, [user?.walletAddress, isFarmer])
+
+  // Fetch wallet balance
+  const fetchWalletBalance = async () => {
+    if (!user?.walletAddress) return;
+
+    try {
+      setBalanceLoading(true);
+      const web3Instance = getWeb3Instance();
+      if (!web3Instance) return;
+
+      const balanceWei = await web3Instance.eth.getBalance(user.walletAddress);
+      const balanceEth = Number(web3Instance.utils.fromWei(balanceWei, 'ether')).toFixed(2);
+      setWalletBalance(balanceEth);
+    } catch (error) {
+      console.error('Error fetching wallet balance:', error);
+    } finally {
+      setBalanceLoading(false);
+    }
+  };
+
+  // Dynamic transaction history function for Ganache
+  const fetchTransactionHistory = async () => {
+    if (!user?.walletAddress) return;
+
+    try {
+      setTransactionsLoading(true);
+      const web3Instance = getWeb3Instance();
+      if (!web3Instance) return;
+
+      // Get transaction count for the address
+      const txCount = await web3Instance.eth.getTransactionCount(user.walletAddress);
+      console.log(`Found ${txCount} transactions for address ${user.walletAddress}`);
+
+      // Tạo mảng để lưu chi tiết các giao dịch
+      const transactionList = [];
+
+      // Lấy block number hiện tại
+      const latestBlock = await web3Instance.eth.getBlockNumber();
+
+      // Duyệt qua tất cả các block để tìm giao dịch liên quan đến walletAddress
+      for (let blockNumber = 0; blockNumber <= latestBlock; blockNumber++) {
+        const block = await web3Instance.eth.getBlock(blockNumber, true); // true để lấy chi tiết giao dịch
+        if (block && block.transactions) {
+          block.transactions.forEach((tx) => {
+            if (
+              tx.from.toLowerCase() === user.walletAddress.toLowerCase() ||
+              tx.to?.toLowerCase() === user.walletAddress.toLowerCase()
+            ) {
+              transactionList.push({
+                hash: tx.hash,
+                from: tx.from,
+                to: tx.to,
+                value: web3Instance.utils.fromWei(tx.value, 'ether'), // Chuyển đổi từ Wei sang Ether
+                gas: tx.gas,
+                gasPrice: web3Instance.utils.fromWei(tx.gasPrice, 'gwei'), // Chuyển đổi gasPrice sang Gwei
+                blockNumber: tx.blockNumber,
+                timestamp: block.timestamp, // Thời gian của block
+              });
+            }
+          });
+        }
+      }
+
+      // Cập nhật state transactions với danh sách giao dịch
+      setTransactions(transactionList);
+      console.log('Transaction list:', transactionList);
+    } catch (error) {
+      console.error('Error fetching transaction history:', error);
+      message.error('Không thể tải lịch sử giao dịch');
+    } finally {
+      setTransactionsLoading(false);
+    }
+  };
 
   const fetchUserProducts = async () => {
     try {
@@ -125,6 +245,49 @@ const ProfilePage = () => {
     setSelectedProductId(null);
   };
 
+  // Mở modal chỉnh sửa hồ sơ
+  const showEditModal = () => {
+    editForm.setFieldsValue({
+      fullname: user.fullname,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      birthday: user.birthday ? moment(user.birthday) : null,
+      address: user.address
+    });
+    setEditModalVisible(true);
+  };
+
+  // Xử lý khi người dùng lưu thông tin
+  const handleUpdateUser = async (values) => {
+    if (!user?.walletAddress) {
+      message.error('Không tìm thấy địa chỉ ví!');
+      return;
+    }
+
+    try {
+      setUpdating(true);
+      const userData = {
+        ...values,
+        birthday: values.birthday ? values.birthday.format('YYYY-MM-DD') : null
+      };
+
+      // Update the user data on the server
+      await updateUser(user.walletAddress, userData);
+      
+      // Reload the account data directly from the API
+      await dispatch(fetchAccount());
+      
+      // Close the modal and show success message
+      message.success('Cập nhật thông tin thành công!');
+      setEditModalVisible(false);
+    } catch (error) {
+      console.error('Lỗi khi cập nhật thông tin:', error);
+      message.error('Không thể cập nhật thông tin. Vui lòng thử lại sau.');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const renderAccountInfo = () => (
     <Card title="Thông tin tài khoản">
       <Row gutter={[16, 16]}>
@@ -138,7 +301,7 @@ const ProfilePage = () => {
         </Col>
         <Col span={12}>
           <Text type="secondary">Số điện thoại</Text>
-          <div><Text strong>{user.phone || 'Chưa cung cấp'}</Text></div>
+          <div><Text strong>{user.phoneNumber || 'Chưa cung cấp'}</Text></div>
         </Col>
         <Col span={12}>
           <Text type="secondary">Loại tài khoản</Text>
@@ -146,13 +309,52 @@ const ProfilePage = () => {
         </Col>
         <Col span={12}>
           <Text type="secondary">Ngày sinh</Text>
-          <div><Text strong>{user.birthday || 'Chưa cung cấp'}</Text></div>
+          <div>
+            <Text strong>
+              {user.birthday ? format(new Date(user.birthday), 'dd/MM/yyyy', { locale: vi }) : 'Chưa cung cấp'}
+            </Text>
+          </div>
         </Col>
-        {isFarmer && (
-          <Col span={24}>
-            <Text type="secondary">Địa chỉ ví</Text>
-            <div><Text strong>{user.walletAddress || 'Chưa kết nối'}</Text></div>
-          </Col>
+        {user?.walletAddress && (
+          <>
+            <Col span={24}>
+              <Text type="secondary">Địa chỉ ví</Text>
+              <div>
+                <Space>
+                  <Text strong copyable>{user.walletAddress}</Text>
+                  <Button
+                    type="link"
+                    size="small"
+                    icon={<LinkOutlined />}
+                    onClick={() => window.open(`https://etherscan.io/address/${user.walletAddress}`, '_blank')}
+                    style={{ padding: 0 }}
+                  />
+                </Space>
+              </div>
+            </Col>
+            <Col span={24}>
+              <Text type="secondary">Số dư ví</Text>
+              <div>
+                {balanceLoading ? (
+                  <Space>
+                    <LoadingOutlined />
+                    <Text type="secondary">Đang tải...</Text>
+                  </Space>
+                ) : (
+                  <Space>
+                    <Text strong>{walletBalance} ETH</Text>
+                    <Button
+                      type="link"
+                      size="small"
+                      icon={<SwapOutlined />}
+                      onClick={fetchWalletBalance}
+                      style={{ padding: 0 }}
+                    />
+                  </Space>
+                )}
+              </div>
+            </Col>
+          </>
         )}
         <Col span={24}>
           <Text type="secondary">Địa chỉ</Text>
@@ -161,7 +363,13 @@ const ProfilePage = () => {
       </Row>
       <Divider />
       <Space direction="vertical" style={{ width: '100%' }}>
-        <Button type="primary" ghost block icon={<UserOutlined />}>
+        <Button 
+          type="primary" 
+          ghost 
+          block 
+          icon={<UserOutlined />} 
+          onClick={showEditModal}
+        >
           Chỉnh sửa hồ sơ
         </Button>
       </Space>
@@ -169,8 +377,20 @@ const ProfilePage = () => {
   );
 
   const farmerItems = [
+    
     {
       key: '1',
+      label: 'Tài khoản',
+      children: (
+        <div>
+          {renderAccountInfo()}
+
+          <Divider />
+        </div>
+      )
+    },
+    {
+      key: '2',
       label: 'Sản phẩm',
       children: (
         <div>
@@ -213,9 +433,8 @@ const ProfilePage = () => {
                       icon={<SafetyOutlined />}
                       size="small"
                       onClick={() => showInspectionModal(product.id)}
-                      disabled={product.status === 'VERIFIED'}
                     >
-                      {product.status === 'VERIFIED' ? 'Đã kiểm định' : 'Kiểm định & Chứng nhận'}
+                      Kiểm định & Chứng nhận
                     </Button>,
                     product.blockchainTxHash && <Button type="link" icon={<LinkOutlined />} size="small">Blockchain</Button>
                   ]}
@@ -307,14 +526,12 @@ const ProfilePage = () => {
             <Col xs={24} md={8}>
               <Card>
                 <Statistic
-                  title="Chứng chỉ"
-                  value={3}
-                  prefix={<SafetyCertificateOutlined style={{ color: '#1677ff' }} />}
-                  suffix={
-                    <Text type="secondary" style={{ fontSize: '12px' }}>
-                      Hữu cơ, Non-GMO, Fair Trade
-                    </Text>
-                  }
+                  title="Số dư ví"
+                  value={walletBalance}
+                  precision={4}
+                  prefix={<WalletOutlined style={{ color: '#1677ff' }} />}
+                  suffix="ETH"
+                  loading={balanceLoading}
                 />
               </Card>
             </Col>
@@ -322,110 +539,107 @@ const ProfilePage = () => {
 
           <Divider />
 
-          <Card title="Hoạt động gần đây" extra={<a href="#">Xem tất cả →</a>}>
-            <List
-              itemLayout="horizontal"
-              dataSource={[
-                {
-                  icon: <ShoppingOutlined style={{ color: '#52c41a' }} />,
-                  title: 'Tạo lô sản phẩm mới',
-                  description: 'Cà chua - Giống heirloom (Lô #TF-2025-0628)',
-                  time: 'Hôm nay, 10:24 AM'
-                },
-                {
-                  icon: <ShoppingOutlined style={{ color: '#1677ff' }} />,
-                  title: 'Hoàn thành giao hàng',
-                  description: 'Cho chợ nông sản Portland (12 món)',
-                  time: 'Hôm qua, 3:45 PM'
-                },
-                {
-                  icon: <QrcodeOutlined style={{ color: '#faad14' }} />,
-                  title: 'Quét mã QR',
-                  description: 'Bởi siêu thị Whole Foods - Seattle',
-                  time: '2 ngày trước'
-                },
-                {
-                  icon: <SafetyOutlined style={{ color: '#722ed1' }} />,
-                  title: 'Cập nhật chứng chỉ',
-                  description: 'Gia hạn chứng chỉ hữu cơ USDA được chấp thuận',
-                  time: '25 tháng 6, 2025'
+          <Card
+            title="Lịch sử giao dịch ETH"
+            extra={<Button type="link" onClick={fetchTransactionHistory} disabled={transactionsLoading}>Làm mới</Button>}
+          >
+            {transactionsLoading ? (
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <LoadingOutlined style={{ fontSize: 24 }} />
+                <p>Đang tải lịch sử giao dịch...</p>
+              </div>
+            ) : transactions.length > 0 ? (
+              <List
+                itemLayout="horizontal"
+                dataSource={transactions}
+                renderItem={(tx) => (
+                  <List.Item
+                    actions={[
+                      <Tooltip title="Sao chép mã giao dịch">
+                        <Button
+                          type="link"
+                          size="small"
+                          icon={<CopyOutlined />}
+                          onClick={() => copyToClipboard(tx.hash)}
+                        />
+                      </Tooltip>,
+                      <Tooltip title="Xem trên Etherscan">
+                        <Button
+                          type="link"
+                          size="small"
+                          icon={<LinkOutlined />}
+                          onClick={() => window.open(`https://etherscan.io/tx/${tx.hash}`, '_blank')}
+                        />
+                      </Tooltip>,
+                    ]}
+                  >
+                    <List.Item.Meta
+                      avatar={
+                        <Avatar
+                          style={{
+                            backgroundColor: tx.from.toLowerCase() === user.walletAddress.toLowerCase() ? '#ff4d4f' : '#52c41a',
+                          }}
+                          icon={tx.from.toLowerCase() === user.walletAddress.toLowerCase() ? <SendOutlined /> : <WalletOutlined />}
+                        />
+                      }
+                      title={
+                        <Space>
+                          <Text strong>
+                            {tx.from.toLowerCase() === user.walletAddress.toLowerCase() ? 'Gửi' : 'Nhận'} {parseFloat(tx.value).toFixed(4)} ETH
+                          </Text>
+                          <Tag color={tx.from.toLowerCase() === user.walletAddress.toLowerCase() ? 'red' : 'green'}>
+                            {tx.from.toLowerCase() === user.walletAddress.toLowerCase() ? 'Gửi' : 'Nhận'}
+                          </Tag>
+                        </Space>
+                      }
+                      description={
+                        <div>
+                          <Paragraph style={{ marginBottom: 4 }}>
+                            <Text type="secondary">
+                              {tx.from.toLowerCase() === user.walletAddress.toLowerCase() ? 'Đến: ' : 'Từ: '}
+                              <Text
+                                code
+                                copyable={{ text: tx.from.toLowerCase() === user.walletAddress.toLowerCase() ? tx.to : tx.from }}
+                                style={{ fontSize: '13px' }}
+                              >
+                                {(tx.from.toLowerCase() === user.walletAddress.toLowerCase() ? tx.to : tx.from).slice(0, 6)}...
+                                {(tx.from.toLowerCase() === user.walletAddress.toLowerCase() ? tx.to : tx.from).slice(-4)}
+                              </Text>
+                            </Text>
+                          </Paragraph>
+                          <Paragraph style={{ marginBottom: 4 }}>
+                            <Text type="secondary">
+                              Phí giao dịch:{' '}
+                              {(Number(tx.gas) * Number(tx.gasPrice) / 1e9).toFixed(6)} ETH
+                            </Text>
+                          </Paragraph>
+                          <Paragraph style={{ marginBottom: 4 }}>
+                            <Text type="secondary">
+                              Block: {tx.blockNumber} | Thời gian:{' '}
+                              {format(new Date(Number(tx.timestamp) * 1000), 'dd/MM/yyyy HH:mm:ss', { locale: vi })}
+                            </Text>
+                          </Paragraph>
+                        </div>
+                      }
+                    />
+                  </List.Item>
+                )}
+              />
+            ) : (
+              <Empty
+                description={
+                  <span>
+                    Không tìm thấy giao dịch nào. <br />
+                    <Text type="secondary">Hãy thực hiện một giao dịch để bắt đầu!</Text>
+                  </span>
                 }
-              ]}
-              renderItem={item => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={
-                      <Avatar style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)' }} icon={item.icon} />
-                    }
-                    title={<Text strong>{item.title}</Text>}
-                    description={
-                      <>
-                        <div>{item.description}</div>
-                        <Text type="secondary" style={{ fontSize: '12px' }}>{item.time}</Text>
-                      </>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+              />
+            )}
+          
           </Card>
         </div>
       ),
-    },
-    {
-      key: '2',
-      label: 'Tài khoản',
-      children: (
-        <div>
-          {renderAccountInfo()}
-
-          <Divider />
-
-          <Card title="Nông trại đã kết nối">
-            <List
-              itemLayout="horizontal"
-              dataSource={[
-                {
-                  name: 'Nông trại hữu cơ Green Valley',
-                  role: 'Chủ sở hữu',
-                  avatar: 'https://images.unsplash.com/photo-1654624747708-13705c045a4b?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=100&amp;q=80'
-                },
-                {
-                  name: 'Hợp tác xã nông dân Willamette',
-                  role: 'Thành viên',
-                  avatar: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=100&amp;q=80'
-                }
-              ]}
-              renderItem={item => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={<Avatar src={item.avatar} />}
-                    title={item.name}
-                    description={item.role}
-                  />
-                </List.Item>
-              )}
-            />
-            <Button type="primary" ghost block icon={<PlusCircleOutlined />} style={{ marginTop: 16 }}>
-              Kết nối nông trại mới
-            </Button>
-          </Card>
-
-          <Divider />
-
-          <Card title="Xuất dữ liệu">
-            <Paragraph>Tải xuống dữ liệu hoạt động nông nghiệp và chuỗi cung ứng để lưu trữ hoặc phân tích.</Paragraph>
-            <Space direction="vertical" style={{ width: '100%' }}>
-              <Button block icon={<FileExcelOutlined />}>
-                Xuất dạng CSV
-              </Button>
-              <Button block icon={<FilePdfOutlined />}>
-                Xuất dạng PDF
-              </Button>
-            </Space>
-          </Card>
-        </div>
-      )
     }
   ];
 
@@ -489,6 +703,85 @@ const ProfilePage = () => {
           onClose={handleCloseInspectionModal}
           productId={selectedProductId}
         />
+
+        {/* Modal chỉnh sửa thông tin người dùng */}
+        <Modal
+          title="Chỉnh sửa thông tin cá nhân"
+          open={editModalVisible}
+          onCancel={() => setEditModalVisible(false)}
+          footer={null}
+          destroyOnClose
+        >
+          <Form
+            form={editForm}
+            layout="vertical"
+            onFinish={handleUpdateUser}
+            initialValues={{
+              fullname: user?.fullname,
+              email: user?.email,
+              phoneNumber: user?.phoneNumber,
+              birthday: user?.birthday ? moment(user.birthday) : null,
+              address: user?.address
+            }}
+          >
+            <Form.Item
+              name="fullname"
+              label="Họ và tên"
+              rules={[{ required: true, message: 'Vui lòng nhập họ và tên' }]}
+            >
+              <Input placeholder="Nhập họ và tên" />
+            </Form.Item>
+
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[
+                { type: 'email', message: 'Email không hợp lệ' },
+                { required: true, message: 'Vui lòng nhập email' }
+              ]}
+            >
+              <Input placeholder="Nhập email" />
+            </Form.Item>
+
+            <Form.Item
+              name="phoneNumber"
+              label="Số điện thoại"
+              rules={[{ required: true, message: 'Vui lòng nhập số điện thoại' }]}
+            >
+              <Input placeholder="Nhập số điện thoại" />
+            </Form.Item>
+
+            <Form.Item
+              name="birthday"
+              label="Ngày sinh"
+            >
+              <DatePicker 
+                style={{ width: '100%' }} 
+                placeholder="Chọn ngày sinh"
+                format="DD/MM/YYYY"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="address"
+              label="Địa chỉ"
+            >
+              <Input.TextArea rows={3} placeholder="Nhập địa chỉ" />
+            </Form.Item>
+
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                icon={<SaveOutlined />}
+                loading={updating}
+              >
+                Lưu thông tin
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
       </Content>
     </Layout>
   )

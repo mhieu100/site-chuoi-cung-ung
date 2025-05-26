@@ -1,12 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-
-import { callLogin } from '../../api/api.auth';
+import { callFetchAccount } from '../../api/api.auth';
 
 export const fetchAccount = createAsyncThunk(
   'account/fetchAccount',
-  async (address) => {
+  async () => {
     try {
-      const response = await callLogin(address);
+      const response = await callFetchAccount();
       return response;
     } catch (error) {
       console.log("'Error fetching account:', error");
@@ -22,7 +21,7 @@ const initialState = {
     email: '',
     fullname: '',
     address: '',
-    phone: '',
+    phoneNumber: '',
     birthday: '',
     role: '',
   },
@@ -39,12 +38,25 @@ export const accountSlice = createSlice({
     setUserLoginInfo: (state, action) => {
       state.isLoading = false;
       state.user.walletAddress = action?.payload?.walletAddress;
-      state.user.email = action.payload.email;
-      state.user.fullname = action.payload.fullname;
-      state.user.address = action.payload.address;
-      state.user.phone = action.payload.phoneNumber;
-      state.user.birthday = action.payload.birthday;
+      state.user.email = action.payload?.email;
+      state.user.fullname = action.payload?.fullname;
+      state.user.address = action.payload?.address;
+      state.user.phoneNumber = action.payload?.phoneNumber;
+      state.user.birthday = action.payload?.birthday;
       state.user.role = action?.payload?.role;
+    },
+    updateUserInfo: (state, action) => {
+      // Update user info while preserving all existing user data
+      // Only update fields that are provided in the payload
+      state.user = {
+        ...state.user,                     // Keep all existing user data
+        // Only update fields if they exist in the payload
+        email: action.payload?.email !== undefined ? action.payload.email : state.user.email,
+        fullname: action.payload?.fullname !== undefined ? action.payload.fullname : state.user.fullname,
+        address: action.payload?.address !== undefined ? action.payload.address : state.user.address,
+        phoneNumber: action.payload?.phoneNumber !== undefined ? action.payload.phoneNumber : state.user.phoneNumber,
+        birthday: action.payload?.birthday !== undefined ? action.payload.birthday : state.user.birthday
+      };
     },
     setLogoutAction: (state) => {
       state.user = {};
@@ -82,6 +94,7 @@ export const {
   setActiveMenu,
   setUserLoginInfo,
   setLogoutAction,
+  updateUserInfo,
 } = accountSlice.actions;
 
 export default accountSlice.reducer;

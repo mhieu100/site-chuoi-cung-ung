@@ -23,16 +23,18 @@ import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import ForbiddenPage from './page/forbidden';
 
 // Import logistics pages
-import LogisticsDashboard from './page/logistics/LogisticsDashboard';
 import LogisticsReports from './page/logistics/LogisticsReports';
 import TransportRequests from './page/logistics/TransportRequests';
 import AllLogistics from './page/logistics/AllLogistics';
 
 // Import inspection pages
-import InspectionDashboard from './page/inspection/InspectionDashboard';
 import InspectionAll from './page/inspection/InspectionAll';
 import InspectionPage from './page/inspection/InspectionPage';
+import AllUsers from './page/inspection/AllUsers';
+import AllProducts from './page/inspection/AllProducts';
 import ProductionStepPage from './page/client/production.step';
+
+import CombinedDashboard from './page/dashboard/CombinedDashboard';
 
 // Create a new role-based route component 
 const RoleBasedRoute = ({ children, allowedRoles }) => {
@@ -137,13 +139,10 @@ function App() {
       ),
       errorElement: <NotFound />,
       children: [
+     
         {
           index: true,
-          element: <LogisticsDashboard />,
-        },
-        {
-          path: 'dashboard',
-          element: <LogisticsDashboard />,
+          element: <TransportRequests />,
         },
         {
           path: 'transport-requests',
@@ -176,15 +175,23 @@ function App() {
       children: [
         {
           index: true,
-          element: <InspectionDashboard />,
+          element: <CombinedDashboard />,
         },
         {
           path: 'dashboard',
-          element: <InspectionDashboard />,
+          element: <CombinedDashboard />,
         },
         {
           path: 'all-inspection',
           element: <InspectionAll />,
+        },
+        {
+          path: 'all-products',
+          element: <AllProducts />,
+        },
+        {
+          path: 'all-users',
+          element: <AllUsers />,
         },
         {
           path: 'product/:productLotId',
