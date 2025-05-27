@@ -56,6 +56,7 @@ const ProductDetailPage = () => {
   const [productionModalVisible, setProductionModalVisible] = useState(false);
   const [certificateModalVisible, setCertificateModalVisible] = useState(false);
   
+  console.log(verificationResult)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -143,30 +144,7 @@ const ProductDetailPage = () => {
                 style={{ width: '100%', borderRadius: 8 }}
               />
               
-              {verificationResult && (
-                <Alert
-                  message={verificationResult.verified ? "Dữ liệu toàn vẹn" : "Dữ liệu không khớp"}
-                  description={
-                    verificationResult.verified 
-                      ? "Dữ liệu sản phẩm trên blockchain khớp với dữ liệu trong cơ sở dữ liệu." 
-                      : "Dữ liệu sản phẩm có thể đã bị thay đổi kể từ khi được ghi lên blockchain."
-                  }
-                  type={verificationResult.verified ? "success" : "error"}
-                  showIcon
-                  style={{ marginTop: 16 }}
-                />
-              )}
-              
               <div style={{ marginTop: 16 }}>
-                <Button 
-                  type="primary" 
-                  style={{ width: '100%' }}
-                  onClick={handleVerifyIntegrity}
-                  loading={verifying}
-                >
-                  Xác minh tính toàn vẹn dữ liệu
-                </Button>
-                
                 <Button 
                   type="default" 
                   style={{ width: '100%', marginTop: 8 }}

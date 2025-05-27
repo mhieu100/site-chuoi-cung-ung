@@ -23,7 +23,6 @@ import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import ForbiddenPage from './page/forbidden';
 
 // Import logistics pages
-import LogisticsReports from './page/logistics/LogisticsReports';
 import TransportRequests from './page/logistics/TransportRequests';
 import AllLogistics from './page/logistics/AllLogistics';
 
@@ -153,10 +152,7 @@ function App() {
           path: 'all-logistics',
           element: <AllLogistics />,
         },
-        {
-          path: 'reports',
-          element: <LogisticsReports />,
-        },
+        
         {
           path: 'profile',
           element: <ProfilePage />,
